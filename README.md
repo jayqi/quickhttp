@@ -14,10 +14,17 @@ Requires Python 3.6 or higher.
 
 ### Development Version
 
-To install the development version of this program, get it directly from GitHub:
+To install the development version of this program, get it directly from GitHub. I recommend using [`pipx`](https://pipxproject.github.io/pipx/) to manage Python command-line programs:
+
 
 ```bash
-pip install -e git+https://github.com/jayqi/quickhttp.git
+pipx install git+https://github.com/jayqi/quickhttp.git
+```
+
+You can also install normally using regular `pip`:
+
+```bash
+pip install git+https://github.com/jayqi/quickhttp.git
 ```
 
 ## Documentation

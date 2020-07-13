@@ -38,9 +38,9 @@ jobs:
       run: |
         poetry run make lint
 
-    # - name: Test package
-    #   run: |
-    #     poetry run make test
+    - name: Test package
+      run: |
+        poetry run make test
 
     - name: Test build docs
       run: |
@@ -50,9 +50,9 @@ jobs:
       run: |
         poetry run make build
 
-    # - name: Upload coverage to codecov
-    #   uses: codecov/codecov-action@v1
-    #   with:
-    #     file: ./coverage.xml
-    #     fail_ci_if_error: true
-    #   if: ${{ matrix.os == 'ubuntu-latest' && matrix.python-version == 3.8 }}
+    - name: Upload coverage to codecov
+      uses: codecov/codecov-action@v1
+      with:
+        file: ./coverage.xml
+        fail_ci_if_error: true
+      if: ${{ matrix.os == 'ubuntu-latest' && matrix.python-version == 3.8 }}

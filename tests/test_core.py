@@ -44,7 +44,7 @@ def test_find_available_port(search_type):
 
 def test_run_timed_http_server(timed_http_server):
     directory, port = timed_http_server
-    response = requests.get(f"http://0.0.0.0:{port}")
+    response = requests.get(f"http://127.0.0.1:{port}")
     assert response.status_code == 200
     with (directory / "index.html").open("r") as fp:
         assert response.text == fp.read()

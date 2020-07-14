@@ -23,7 +23,7 @@ from quickhttp.core import (
 def timed_http_server(tmp_path, html_file):
     shutil.copy(html_file, tmp_path)
     port = find_available_port()
-    run_server = partial(run_timed_http_server, port=port, directory=tmp_path, time=5)
+    run_server = partial(run_timed_http_server, port=port, directory=tmp_path, time=10)
     thread = Thread(target=run_server)
     thread.daemon = True
     thread.start()

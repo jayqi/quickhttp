@@ -2,6 +2,7 @@ from pathlib import Path
 import shutil
 from functools import partial
 from threading import Thread
+from time import sleep
 
 from packaging.version import parse as parse_version, Version
 import pytest
@@ -27,6 +28,7 @@ def timed_http_server(tmp_path, html_file):
     thread = Thread(target=run_server)
     thread.daemon = True
     thread.start()
+    sleep(3)
     return (tmp_path, port)
 
 

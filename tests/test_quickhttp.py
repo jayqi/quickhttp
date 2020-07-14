@@ -1,6 +1,7 @@
 import concurrent.futures
 import shutil
 import subprocess
+from time import sleep
 
 import requests
 from typer.testing import CliRunner
@@ -46,6 +47,7 @@ def test_main_auto(html_file, tmp_path):
             app,
             [str(tmp_path), "--port-range-min", port, "--port-range-max", port, "--time", "10s"],
         )
+        sleep(3)
 
         response = requests.get(f"http://0.0.0.0:{port}")
         with html_file.open("r") as fp:

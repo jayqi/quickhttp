@@ -28,4 +28,4 @@ lint:
 	flake8 quickhttp tests
 
 test:
-	pytest -vv
+	pytest -s

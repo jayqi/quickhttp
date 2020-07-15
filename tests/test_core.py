@@ -2,6 +2,7 @@ from pathlib import Path
 import shutil
 from functools import partial
 from threading import Thread
+from time import sleep
 
 from packaging.version import parse as parse_version, Version
 import pytest
@@ -23,10 +24,11 @@ from quickhttp.core import (
 def timed_http_server(tmp_path, html_file):
     shutil.copy(html_file, tmp_path)
     port = find_available_port()
-    run_server = partial(run_timed_http_server, port=port, directory=tmp_path, time=5)
+    run_server = partial(run_timed_http_server, port=port, directory=tmp_path, time=10)
     thread = Thread(target=run_server)
     thread.daemon = True
     thread.start()
+    sleep(3)
     return (tmp_path, port)
 
 

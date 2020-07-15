@@ -1,6 +1,6 @@
 .PHONY: build clean clean-build clean-docs clean-test lint test
 
-build: clean
+build: clean-build
 	poetry build
 
 clean: clean-build clean-docs clean-test
@@ -11,7 +11,7 @@ clean-build:
 	rm -rf quickhttp.egg-info
 
 clean-docs:
-	rm -rf docs/site
+	rm -rf site
 
 clean-test:
 	rm -f .coverage
@@ -28,4 +28,4 @@ lint:
 	flake8 quickhttp tests
 
 test:
-	pytest -vv
+	pytest -s

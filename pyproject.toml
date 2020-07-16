@@ -25,6 +25,7 @@ mkdocs-material = "^5.4.0"
 mkdocstrings = "^0.12.1"
 requests = "^2.24.0"
 packaging = "^20.4"
+mike = "^0.5.3"
 
 [tool.black]
 line-length = 99

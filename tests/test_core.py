@@ -1,6 +1,5 @@
 from pathlib import Path
 import shutil
-from functools import partial
 from threading import Thread
 from time import sleep
 
@@ -36,11 +35,12 @@ def timed_http_server(tmp_path, html_file):
             "directory": tmp_path,
             "time": KEEP_ALIVE_TIME,
         },
+        daemon=True,
     )
-    thread.daemon = True
     thread.start()
     sleep(WAIT_TIME)
-    return (tmp_path, port)
+    yield (tmp_path, port)
+    thread.join()
 
 
 def test_version():
@@ -67,6 +67,12 @@ def test_find_available_port_invalid_search_type():
         find_available_port(search_type="invalid_type")
 
 
+def test_find_available_port_none_found(timed_http_server):
+    directory, port = timed_http_server
+    with pytest.raises(NoAvailablePortFound):
+        find_available_port(range_min=port, range_max=port)
+
+
 def test_run_timed_http_server(timed_http_server):
     directory, port = timed_http_server
     assert not is_port_available(port)
@@ -74,7 +80,7 @@ def test_run_timed_http_server(timed_http_server):
     assert response.status_code == 200
     with (directory / "index.html").open("r") as fp:
         assert response.text == fp.read()
-    sleep(6)
+    sleep(KEEP_ALIVE_TIME)
     assert is_port_available(port)
 
 

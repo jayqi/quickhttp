@@ -139,8 +139,7 @@ def run_timed_http_server(address: str, port: int, directory: Path, time: int):
         server_address=(address, port), RequestHandlerClass=SimpleHTTPRequestHandler
     )
     with working_directory(directory):
-        thread = Thread(target=httpd.serve_forever)
-        thread.daemon = True
+        thread = Thread(target=httpd.serve_forever, daemon=True)
         thread.start()
         try:
             sleep(time)

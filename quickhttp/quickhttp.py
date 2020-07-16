@@ -39,13 +39,23 @@ def quickhttp(
             "such as '10m' or '10:00'."
         ),
     ),
+    bind: str = typer.Option(
+        "127.0.0.1",
+        "--bind",
+        "-b",
+        help=(
+            "Address to bind server to. '127.0.0.1' is 'localhost', meaning it will only be "
+            "accessible from this computer. '0.0.0.0' is all interfaces (IP addresses) on this "
+            "computer, meaning that it can be accessible by other computers at your IP address."
+        ),
+    ),
     port: Optional[int] = typer.Option(
         None,
         "--port",
         "-p",
         help=(
             "Port to use. If None (default), will automatically search for an open port using "
-            "the other options. If specified, ignores other options."
+            "the other port-related options. If specified, ignores other port-related options."
         ),
     ),
     port_range_min: int = typer.Option(
@@ -80,8 +90,8 @@ def quickhttp(
             search_type=port_search_type,
         )
     typer.echo(
-        f"Starting http.server at http://0.0.0.0:{port} for directory [{directory}]. "
+        f"Starting http.server at http://{bind}:{port} for directory [{directory}]. "
         f"Server will stay alive for {str(timedelta(seconds=time_sec))}."
     )
-    run_timed_http_server(port=port, directory=directory, time=time_sec)
+    run_timed_http_server(address=bind, port=port, directory=directory, time=time_sec)
     typer.echo("Server closed.")

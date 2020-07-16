@@ -17,23 +17,41 @@ from quickhttp.core import (
     SearchType,
     working_directory,
     run_timed_http_server,
+    NoAvailablePortFound,
 )
+
+KEEP_ALIVE_TIME = 4  # Duration to keep server alive for
+WAIT_TIME = 2  # Duration to wait before running test, to give server time to start up
 
 
 @pytest.fixture()
 def timed_http_server(tmp_path, html_file):
     shutil.copy(html_file, tmp_path)
     port = find_available_port()
-    run_server = partial(run_timed_http_server, port=port, directory=tmp_path, time=10)
-    thread = Thread(target=run_server)
+    thread = Thread(
+        target=run_timed_http_server,
+        kwargs={
+            "address": "127.0.0.1",
+            "port": port,
+            "directory": tmp_path,
+            "time": KEEP_ALIVE_TIME,
+        },
+    )
     thread.daemon = True
     thread.start()
-    sleep(3)
+    sleep(WAIT_TIME)
     return (tmp_path, port)
 
 
 def test_version():
     assert isinstance(parse_version(__version__), Version)
+
+
+def test_is_port_available(timed_http_server):
+    _, port = timed_http_server
+    assert not is_port_available(port)
+    sleep(KEEP_ALIVE_TIME)
+    assert is_port_available(port)
 
 
 @pytest.mark.parametrize("search_type", [level.value for level in SearchType])
@@ -44,17 +62,20 @@ def test_find_available_port(search_type):
     assert port <= DEFAULT_PORT_RANGE_MAX
 
 
+def test_find_available_port_invalid_search_type():
+    with pytest.raises(ValueError, match="Invalid search_type"):
+        find_available_port(search_type="invalid_type")
+
+
 def test_run_timed_http_server(timed_http_server):
     directory, port = timed_http_server
-    response = requests.get(f"http://0.0.0.0:{port}")
+    assert not is_port_available(port)
+    response = requests.get(f"http://127.0.0.1:{port}")
     assert response.status_code == 200
     with (directory / "index.html").open("r") as fp:
         assert response.text == fp.read()
-
-
-def test_run_port_no_longer_available(timed_http_server):
-    _, port = timed_http_server
-    assert not is_port_available(port)
+    sleep(6)
+    assert is_port_available(port)
 
 
 def test_working_directory(tmp_path):

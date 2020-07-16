@@ -8,6 +8,7 @@ import random
 import socket
 from threading import Thread
 from time import sleep
+import warnings
 
 try:
     import importlib.metadata as importlib_metadata
@@ -24,18 +25,20 @@ DEFAULT_PORT_MAX_TRIES = 50
 DEFAULT_PORT_SEARCH_TYPE = "sequential"
 
 
-def is_port_available(port: int, host: str = "0.0.0.0") -> bool:
-    """Check if port is available (not in use) on host.
+def is_port_available(port: int) -> bool:
+    """Check if port is available (not in use) on the local host. This is determined by
+    attemping to create a socket connection with that port. If the connection is successful, that
+    means something is using the port.
 
     Args:
         port (int): port to check.
-        host (str, optional): Host to check port on. Defaults to "0.0.0.0".
 
     Returns:
-        bool: If that port is available.
+        bool: If that port is available (not in use).
     """
     with closing(socket.socket(socket.AF_INET, socket.SOCK_STREAM)) as sock:
-        if sock.connect_ex((host, port)) == 0:
+        if sock.connect_ex(("127.0.0.1", port)) == 0:
+            # Successfull connection
             return False
     return True
 
@@ -61,8 +64,8 @@ def find_available_port(
     range_max: int = DEFAULT_PORT_RANGE_MAX,
     max_tries: int = DEFAULT_PORT_MAX_TRIES,
     search_type: SearchType = DEFAULT_PORT_SEARCH_TYPE,
-    host: str = "0.0.0.0",
 ) -> int:
+    max_tries = min(max_tries, range_max - range_min + 1)
 
     if search_type == SearchType.sequential:
         to_try = islice(range(range_min, range_max + 1), max_tries)
@@ -76,19 +79,17 @@ def find_available_port(
         raise ValueError(msg)
 
     for port in to_try:
-        if is_port_available(port=port, host=host):
+        if is_port_available(port=port):
             return port
 
-    params = {
-        "range_min": range_min,
-        "range_max": range_max,
-        "search_type": SearchType(search_type).value,
-    }
-    msg = f"Unable to find available port in {max_tries} tries given parameters: {params}"
-    raise NoAvailablePortFound(msg)
+    raise NoAvailablePortFound(
+        f"Unable to find available port in range [{range_min}, {range_max}] with "
+        f"{SearchType(search_type).value} search in {max_tries} tries."
+    )
 
 
-find_available_port.__doc__ = f"""Find an available port (not in use) given parameters.
+find_available_port.__doc__ = f"""\
+Searches for an available port (not in use) on the local host.
 
 Args:
     range_min (int, optional): Minimum of range to search. Defaults to
@@ -100,7 +101,6 @@ Args:
     search_type (SearchType, optional): Type of search. One of
         [{'|'.join(level.value for level in SearchType)}]. Defaults to
         {DEFAULT_PORT_SEARCH_TYPE}.
-    host (str, optional): Host to find ports on. Defaults to "0.0.0.0".
 
 Raises:
     ValueError: If search_type is invalid.
@@ -126,15 +126,18 @@ def working_directory(directory: Path):
         os.chdir(prev_cwd)
 
 
-def run_timed_http_server(port: int, directory: Path, time: int):
+def run_timed_http_server(address: str, port: int, directory: Path, time: int):
     """Start a [HTTPServer](https://docs.python.org/3/library/http.server.html) for specified time.
 
     Args:
+        address (str): Address to bind the server to.
         port (int): Port to use.
         directory (Path): Directory to serve.
         time (int): Time to keep server alive for, in seconds.
     """
-    httpd = HTTPServer(server_address=("", port), RequestHandlerClass=SimpleHTTPRequestHandler)
+    httpd = HTTPServer(
+        server_address=(address, port), RequestHandlerClass=SimpleHTTPRequestHandler
+    )
     with working_directory(directory):
         thread = Thread(target=httpd.serve_forever)
         thread.daemon = True

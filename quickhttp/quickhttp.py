@@ -44,9 +44,9 @@ def quickhttp(
         "--bind",
         "-b",
         help=(
-            "Address to bind server to. '127.0.0.1' is 'localhost', meaning it will only be "
-            "accessible from this computer. '0.0.0.0' is all interfaces (IP addresses) on this "
-            "computer, meaning that it can be accessible by other computers at your IP address."
+            "Address to bind server to. '127.0.0.1' (or 'localhost') will only be accessible from "
+            "this computer. '0.0.0.0' is all interfaces (IP addresses) on this computer, meaning "
+            "that it can be accessible by other computers at your IP address."
         ),
     ),
     port: Optional[int] = typer.Option(

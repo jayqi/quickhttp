@@ -1,4 +1,5 @@
 .PHONY: build clean clean-build clean-docs clean-test lint test
+VERSION := $(shell quickhttp --version)
 
 build: clean-build
 	poetry build
@@ -22,6 +23,16 @@ clean-test:
 docs: clean-docs
 	cp README.md docs/index.md
 	mkdocs build
+
+docs-release: clean-docs
+	cp README.md docs/index.md
+	mike delete dev
+	mike deploy $(VERSION) latest --push
+
+docs-dev: clean-docs
+	cp README.md docs/index.md
+	mike delete dev
+	mike deploy $(VERSION)+dev dev --push
 
 lint:
 	black --check quickhttp tests

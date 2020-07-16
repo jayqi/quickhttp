@@ -8,7 +8,6 @@ import random
 import socket
 from threading import Thread
 from time import sleep
-import warnings
 
 try:
     import importlib.metadata as importlib_metadata

@@ -2,8 +2,17 @@
 name = "quickhttp"
 version = "0.1.0"
 description = "Lightweight CLI that wraps Python's `http.server` with automatic port-finding and shutdown."
+license = "MIT"
 authors = ["Jay Qi <jayqi.opensource@gmail.com>"]
 readme = "README.md"
+homepage = "https://github.com/jayqi/quickhttp"
+repository = "https://github.com/jayqi/quickhttp"
+documentation = "https://jayqi.github.io/quickhttp/"
+keywords = ["http server", "dev server"]
+classifiers = [
+    "Intended Audience :: Developers",
+    "Topic :: Internet :: WWW/HTTP :: HTTP Servers"
+]
 
 [tool.poetry.scripts]
 quickhttp = "quickhttp.quickhttp:app"

@@ -8,7 +8,7 @@
 
 - Automatically finds and uses an available port.
 - Has a keep-alive time and shuts down automatically, in case you forget about it.
-- More secure default of `127.0.0.1` (`localhost`) instead of `0.0.0.0`
+- More secure default of `127.0.0.1` (`localhost`) instead of `0.0.0.0`.
 - Easier to type and autocomplete than `python -m http.server`.
 
 ## Installation

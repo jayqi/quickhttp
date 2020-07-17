@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "quickhttp"
 version = "0.1.0"
-description = "Lightweight CLI that wraps Python's `http.server` with automatic port-finding and shutdown."
+description = "Lightweight CLI that wraps Python's http.server with automatic port-finding and shutdown."
 license = "MIT"
 authors = ["Jay Qi <jayqi.opensource@gmail.com>"]
 readme = "README.md"

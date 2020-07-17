@@ -10,6 +10,7 @@ repository = "https://github.com/jayqi/quickhttp"
 documentation = "https://jayqi.github.io/quickhttp/"
 keywords = ["http server", "dev server"]
 classifiers = [
+    "Operating System :: OS Independent",
     "Intended Audience :: Developers",
     "Topic :: Internet :: WWW/HTTP :: HTTP Servers"
 ]

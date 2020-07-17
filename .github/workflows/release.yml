@@ -41,26 +41,9 @@ jobs:
           repository_url: https://test.pypi.org/legacy/
           skip_existing: true
 
-      # - name: Publish to Production PyPI
-      #   uses: pypa/gh-action-pypi-publish@v1.3.0
-      #   with:
-      #     user: __token__
-      #     password: ${{ secrets.PYPI_PROD_TOKEN }}
-      #     skip_existing: false
-
-      - name: Upload tarball to release
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Publish to Production PyPI
+        uses: pypa/gh-action-pypi-publish@v1.3.0
         with:
-          upload_url: ${{ github.event.release.upload_url }}
-          asset_path: ./dist/quickhttp-*.tar.gz
-          asset_content_type: application/gzip
-
-      - name: Upload tarball to release
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ github.event.release.upload_url }}
-          asset_path: ./dist/quickhttp-*.whl
+          user: __token__
+          password: ${{ secrets.PYPI_PROD_TOKEN }}
+          skip_existing: false

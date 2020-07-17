@@ -31,8 +31,8 @@ docs-release: clean-docs
 
 docs-dev: clean-docs
 	cp README.md docs/index.md
-	mike delete dev
-	mike deploy $(VERSION)+dev dev --push
+	mike delete dev || true
+	mike deploy "$(VERSION)+dev" dev --push
 
 lint:
 	black --check quickhttp tests

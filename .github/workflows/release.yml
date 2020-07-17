@@ -1,0 +1,66 @@
+name: release
+
+on:
+  release:
+    types:
+      - published
+
+jobs:
+  build:
+    name: Build and publish new release
+    runs-on: "ubuntu-latest"
+    if: github.repository == 'jayqi/quickhttp'
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.7
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install poetry
+          poetry install
+
+      - name: Build package
+        run: |
+          echo "${{ github.event.release.tag_name }}"
+          PACKAGE_VERSION=$(poetry run quickhttp --version)
+          echo $PACKAGE_VERSION
+          [ ${{ github.event.release.tag_name }} == "v$PACKAGE_VERSION" ] || { exit 1; }
+          poetry run make build
+
+      - name: Publish to Test PyPI
+        uses: pypa/gh-action-pypi-publish@v1.3.0
+        with:
+          user: __token__
+          password: ${{ secrets.PYPI_TEST_TOKEN }}
+          repository_url: https://test.pypi.org/legacy/
+          skip_existing: true
+
+      # - name: Publish to Production PyPI
+      #   uses: pypa/gh-action-pypi-publish@v1.3.0
+      #   with:
+      #     user: __token__
+      #     password: ${{ secrets.PYPI_PROD_TOKEN }}
+      #     skip_existing: false
+
+      - name: Upload tarball to release
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ github.event.release.upload_url }}
+          asset_path: ./dist/quickhttp-*.tar.gz
+          asset_content_type: application/gzip
+
+      - name: Upload tarball to release
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ github.event.release.upload_url }}
+          asset_path: ./dist/quickhttp-*.whl

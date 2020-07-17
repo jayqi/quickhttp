@@ -1,6 +1,6 @@
 # quickhttp
 
-[![tests](https://github.com/jayqi/quickhttp/workflows/tests/badge.svg?branch=master)](https://github.com/jayqi/quickhttp/actions?query=workflow%3Atests+branch%3Amaster) [![PyPI](https://img.shields.io/pypi/v/quickhttp.svg)](https://pypi.org/project/quickhttp/)
+[![tests](https://github.com/jayqi/quickhttp/workflows/tests/badge.svg?branch=master)](https://github.com/jayqi/quickhttp/actions?query=workflow%3Atests+branch%3Amaster) [![codecov](https://codecov.io/gh/jayqi/quickhttp/branch/master/graph/badge.svg)](https://codecov.io/gh/jayqi/quickhttp) [![PyPI](https://img.shields.io/pypi/v/quickhttp.svg)](https://pypi.org/project/quickhttp/)
 
 `quickhttp` is a lightweight CLI that wraps Python's `http.server` with automatic port-finding and automatic shutdown after a certain duration.
 
@@ -18,7 +18,6 @@ Requires Python 3.6 or higher.
 ### Development Version
 
 To install the development version of this program, get it directly from GitHub. I recommend using [`pipx`](https://pipxproject.github.io/pipx/) to manage Python command-line programs:
-
 
 ```bash
 pipx install git+https://github.com/jayqi/quickhttp.git

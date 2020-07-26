@@ -6,22 +6,18 @@ import os
 from pathlib import Path
 import random
 import socket
+import sys
 from threading import Thread
 from time import sleep
+from typing import Iterable
 
-try:
+if sys.version_info[:2] >= (3, 8):
     import importlib.metadata as importlib_metadata
-except ModuleNotFoundError:
+else:
     import importlib_metadata
 
 
 __version__ = importlib_metadata.version(__name__.split(".", 1)[0])
-
-
-DEFAULT_PORT_RANGE_MIN = 8000
-DEFAULT_PORT_RANGE_MAX = 8999
-DEFAULT_PORT_MAX_TRIES = 50
-DEFAULT_PORT_SEARCH_TYPE = "sequential"
 
 
 def is_port_available(port: int) -> bool:
@@ -58,6 +54,12 @@ class NoAvailablePortFound(Exception):
     pass
 
 
+DEFAULT_PORT_RANGE_MIN = 8000
+DEFAULT_PORT_RANGE_MAX = 8999
+DEFAULT_PORT_MAX_TRIES = 50
+DEFAULT_PORT_SEARCH_TYPE = SearchType.sequential
+
+
 def find_available_port(
     range_min: int = DEFAULT_PORT_RANGE_MIN,
     range_max: int = DEFAULT_PORT_RANGE_MAX,
@@ -66,6 +68,7 @@ def find_available_port(
 ) -> int:
     max_tries = min(max_tries, range_max - range_min + 1)
 
+    to_try: Iterable[int]
     if search_type == SearchType.sequential:
         to_try = islice(range(range_min, range_max + 1), max_tries)
     elif search_type == SearchType.random:

@@ -37,6 +37,7 @@ requests = "^2.24.0"
 packaging = "^20.4"
 mike = "^0.5.3"
 coverage = "^5.2"
+mypy = "^0.782"
 
 [tool.black]
 line-length = 99

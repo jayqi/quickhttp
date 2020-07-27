@@ -26,7 +26,6 @@ docs: clean-docs
 
 docs-release: clean-docs
 	cp README.md docs/index.md
-	mike delete dev
 	mike deploy $(VERSION) latest --push
 
 docs-dev: clean-docs
@@ -37,6 +36,7 @@ docs-dev: clean-docs
 lint:
 	black --check quickhttp tests
 	flake8 quickhttp tests
+	mypy quickhttp tests
 
 test:
 	pytest -vv

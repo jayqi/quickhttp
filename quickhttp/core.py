@@ -1,15 +1,15 @@
-from contextlib import closing, contextmanager
+from contextlib import closing
 from enum import Enum
 from itertools import islice
-from http.server import HTTPServer, SimpleHTTPRequestHandler
+from functools import partial
+from http.server import BaseHTTPRequestHandler, HTTPServer, SimpleHTTPRequestHandler
 import os
-from pathlib import Path
 import random
 import socket
 import sys
-from threading import Thread
-from time import sleep
-from typing import Iterable
+from typing import Callable, Iterable, Tuple, Union
+
+import typer
 
 if sys.version_info[:2] >= (3, 8):
     import importlib.metadata as importlib_metadata
@@ -113,38 +113,43 @@ Returns:
 """
 
 
-@contextmanager
-def working_directory(directory: Path):
-    """Context manager that changes working directory and returns to previous on exit.
-
-    Args:
-        directory (Path): Directory to temporarily change to.
+class TimedHTTPServer(HTTPServer):
+    """Subclass of http.server.HTTPServer that tracks timeout status.
     """
-    prev_cwd = Path.cwd()
-    os.chdir(directory)
-    try:
-        yield
-    finally:
-        os.chdir(prev_cwd)
+
+    def __init__(
+        self,
+        server_address: Tuple[str, int],
+        RequestHandlerClass: Callable[..., BaseHTTPRequestHandler],
+        timeout: int,
+    ):
+        self.timeout = timeout
+        self.timeout_reached = False
+        super().__init__(server_address=server_address, RequestHandlerClass=RequestHandlerClass)
+
+    def handle_timeout(self):
+        self.timeout_reached = True
 
 
-def run_timed_http_server(address: str, port: int, directory: Path, time: int):
-    """Start a [HTTPServer](https://docs.python.org/3/library/http.server.html) for specified time.
+def run_timed_http_server(
+    address: str, port: int, directory: Union[str, os.PathLike], timeout: int
+):
+    """Start a [HTTPServer](https://docs.python.org/3/library/http.server.html) with specified
+    timeout.
 
     Args:
         address (str): Address to bind the server to.
         port (int): Port to use.
-        directory (Path): Directory to serve.
-        time (int): Time to keep server alive for, in seconds.
+        directory (Union[str, os.PathLike]): Directory to serve.
+        timeout (int): Time to keep server alive for, in seconds.
     """
-    httpd = HTTPServer(
-        server_address=(address, port), RequestHandlerClass=SimpleHTTPRequestHandler
-    )
-    with working_directory(directory):
-        thread = Thread(target=httpd.serve_forever, daemon=True)
-        thread.start()
+    handler = partial(SimpleHTTPRequestHandler, directory=str(directory))
+    with TimedHTTPServer(
+        server_address=(address, port), RequestHandlerClass=handler, timeout=timeout
+    ) as httpd:
         try:
-            sleep(time)
+            while not httpd.timeout_reached:  # type: ignore
+                httpd.handle_request()
+            typer.echo("Timeout reached.")
         except KeyboardInterrupt:
-            pass
-        httpd.shutdown()
+            typer.echo(" KeyboardInterrupt received.")

@@ -30,13 +30,13 @@ def quickhttp(
     directory: Path = typer.Argument(
         ".", dir_okay=True, file_okay=False, readable=True, help="Directory to serve."
     ),
-    time: str = typer.Option(
+    timeout: str = typer.Option(
         "10m",
-        "--time",
+        "--timeout",
         "-t",
         help=(
-            "Time to keep server alive for. Accepts time expressions parsable by pytimeparse, "
-            "such as '10m' or '10:00'."
+            "Time to keep server alive for after most recent request. Accepts time expressions "
+            "parsable by pytime parse, such as '10m' or '10:00'."
         ),
     ),
     bind: str = typer.Option(
@@ -81,7 +81,7 @@ def quickhttp(
 ):
     """Lightweight CLI that wraps Python's `http.server` with automatic port-finding and shutdown.
     """
-    time_sec = parse(time)
+    timeout_sec = parse(timeout)
     if not port:
         port = find_available_port(
             range_min=port_range_min,
@@ -91,7 +91,7 @@ def quickhttp(
         )
     typer.echo(
         f"Starting http.server at http://{bind}:{port} for directory [{directory}]. "
-        f"Server will stay alive for {str(timedelta(seconds=time_sec))}."
+        f"Server will stay alive for {str(timedelta(seconds=timeout_sec))}."
     )
-    run_timed_http_server(address=bind, port=port, directory=directory, time=time_sec)
+    run_timed_http_server(address=bind, port=port, directory=directory, timeout=timeout_sec)
     typer.echo("Server closed.")

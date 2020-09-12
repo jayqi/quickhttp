@@ -23,7 +23,7 @@ def test_quickhttp(html_file, tmp_path):
             app,
             [
                 str(tmp_path),
-                "--time",
+                "--timeout",
                 f"{KEEP_ALIVE_TIME}s",
                 "--port-range-min",
                 port,
@@ -55,7 +55,7 @@ def test_python_m_quickhttp(html_file, tmp_path):
                 "-m",
                 "quickhttp",
                 str(tmp_path),
-                "--time",
+                "--timeout",
                 f"{KEEP_ALIVE_TIME}s",
                 "--port-range-min",
                 str(port),
@@ -86,7 +86,7 @@ def test_quickhttp_with_port(html_file, tmp_path):
         future = executor.submit(
             CliRunner().invoke,
             app,
-            [str(tmp_path), "--time", f"{KEEP_ALIVE_TIME}s", "--port", port],
+            [str(tmp_path), "--timeout", f"{KEEP_ALIVE_TIME}s", "--port", port],
         )
         sleep(WAIT_TIME)
 

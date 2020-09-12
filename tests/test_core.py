@@ -31,7 +31,7 @@ def timed_http_server(tmp_path, html_file):
             "address": "127.0.0.1",
             "port": port,
             "directory": tmp_path,
-            "time": KEEP_ALIVE_TIME,
+            "timeout": KEEP_ALIVE_TIME,
         },
         daemon=True,
     )
@@ -48,7 +48,7 @@ def test_version():
 def test_is_port_available(timed_http_server):
     _, port = timed_http_server
     assert not is_port_available(port)
-    sleep(KEEP_ALIVE_TIME)
+    sleep(WAIT_TIME + KEEP_ALIVE_TIME)
     assert is_port_available(port)
 
 
@@ -78,5 +78,5 @@ def test_run_timed_http_server(timed_http_server):
     assert response.status_code == 200
     with (directory / "index.html").open("r") as fp:
         assert response.text == fp.read()
-    sleep(KEEP_ALIVE_TIME)
+    sleep(WAIT_TIME + KEEP_ALIVE_TIME)
     assert is_port_available(port)

@@ -1,4 +1,3 @@
-from pathlib import Path
 import shutil
 from threading import Thread
 from time import sleep
@@ -14,12 +13,11 @@ from quickhttp.core import (
     is_port_available,
     find_available_port,
     SearchType,
-    working_directory,
     run_timed_http_server,
     NoAvailablePortFound,
 )
 
-KEEP_ALIVE_TIME = 4  # Duration to keep server alive for
+KEEP_ALIVE_TIME = 3  # Duration to keep server alive for
 WAIT_TIME = 2  # Duration to wait before running test, to give server time to start up
 
 
@@ -33,7 +31,7 @@ def timed_http_server(tmp_path, html_file):
             "address": "127.0.0.1",
             "port": port,
             "directory": tmp_path,
-            "time": KEEP_ALIVE_TIME,
+            "timeout": KEEP_ALIVE_TIME,
         },
         daemon=True,
     )
@@ -50,7 +48,7 @@ def test_version():
 def test_is_port_available(timed_http_server):
     _, port = timed_http_server
     assert not is_port_available(port)
-    sleep(KEEP_ALIVE_TIME)
+    sleep(WAIT_TIME + KEEP_ALIVE_TIME)
     assert is_port_available(port)
 
 
@@ -80,13 +78,5 @@ def test_run_timed_http_server(timed_http_server):
     assert response.status_code == 200
     with (directory / "index.html").open("r") as fp:
         assert response.text == fp.read()
-    sleep(KEEP_ALIVE_TIME)
+    sleep(WAIT_TIME + KEEP_ALIVE_TIME)
     assert is_port_available(port)
-
-
-def test_working_directory(tmp_path):
-    cwd = Path.cwd()
-    assert cwd != tmp_path
-    with working_directory(tmp_path):
-        assert Path.cwd() == tmp_path
-    assert Path.cwd() == cwd

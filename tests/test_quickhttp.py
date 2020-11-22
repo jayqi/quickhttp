@@ -34,6 +34,7 @@ def test_quickhttp(html_file, tmp_path):
         sleep(WAIT_TIME)
 
         response = requests.get(f"http://127.0.0.1:{port}")
+        assert response.encoding == "utf-8"
         with html_file.open("r", encoding="utf-8") as fp:
             assert response.text == fp.read()
 
@@ -69,6 +70,7 @@ def test_python_m_quickhttp(html_file, tmp_path):
         sleep(WAIT_TIME)
 
         response = requests.get(f"http://127.0.0.1:{port}")
+        assert response.encoding == "utf-8"
         with html_file.open("r", encoding="utf-8") as fp:
             assert response.text == fp.read()
 
@@ -91,6 +93,7 @@ def test_quickhttp_with_port(html_file, tmp_path):
         sleep(WAIT_TIME)
 
         response = requests.get(f"http://127.0.0.1:{port}")
+        assert response.encoding == "utf-8"
         with html_file.open("r", encoding="utf-8") as fp:
             assert response.text == fp.read()
 

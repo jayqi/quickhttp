@@ -7,9 +7,9 @@
 <meta content="width=device-width,initial-scale=1" name="viewport"/>
 <link href="https://jayqi.github.io/quickhttp/api-reference/" rel="canonical"/>
 <link href="../assets/images/favicon.png" rel="shortcut icon"/>
-<meta content="mkdocs-1.1.2, mkdocs-material-5.4.0" name="generator"/>
+<meta content="mkdocs-1.1.2, mkdocs-material-5.5.12" name="generator"/>
 <title>API Reference - quickhttp</title>
-<link href="../assets/stylesheets/main.fe0cca5b.min.css" rel="stylesheet"/>
+<link href="../assets/stylesheets/main.4dd2dd8d.min.css" rel="stylesheet"/>
 <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
 <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700%7CRoboto+Mono&amp;display=fallback" rel="stylesheet"/>
 <style>body,input{font-family:"Roboto",-apple-system,BlinkMacSystemFont,Helvetica,Arial,sans-serif}code,kbd,pre{font-family:"Roboto Mono",SFMono-Regular,Consolas,Menlo,monospace}</style>
@@ -119,25 +119,49 @@
 <input class="md-nav__toggle md-toggle" data-md-toggle="toc" id="__toc" type="checkbox"/>
 <label class="md-nav__link md-nav__link--active" for="__toc">
         API Reference
-        <span class="md-nav__icon md-icon">
-<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3 9h14V7H3v2m0 4h14v-2H3v2m0 4h14v-2H3v2m16 0h2v-2h-2v2m0-10v2h2V7h-2m0 6h2v-2h-2v2z"></path></svg>
-</span>
+        <span class="md-nav__icon md-icon"></span>
 </label>
 <a class="md-nav__link md-nav__link--active" href="./" title="API Reference">
       API Reference
     </a>
 <nav aria-label="Table of contents" class="md-nav md-nav--secondary">
 <label class="md-nav__title" for="__toc">
-<span class="md-nav__icon md-icon">
-<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"></path></svg>
-</span>
+<span class="md-nav__icon md-icon"></span>
       Table of contents
     </label>
 <ul class="md-nav__list" data-md-scrollfix="">
 <li class="md-nav__item">
+<a class="md-nav__link" href="#quickhttp.core.DirectoryHTTPRequestHandler">
+    DirectoryHTTPRequestHandler
+  </a>
+<nav aria-label="DirectoryHTTPRequestHandler" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#quickhttp.core.DirectoryHTTPRequestHandler.translate_path">
+    translate_path()
+  </a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
 <a class="md-nav__link" href="#quickhttp.core.SearchType">
     SearchType
   </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#quickhttp.core.TimedHTTPServer">
+    TimedHTTPServer
+  </a>
+<nav aria-label="TimedHTTPServer" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#quickhttp.core.TimedHTTPServer.handle_timeout">
+    handle_timeout()
+  </a>
+</li>
+</ul>
+</nav>
 </li>
 <li class="md-nav__item">
 <a class="md-nav__link" href="#quickhttp.core.find_available_port">
@@ -152,11 +176,6 @@
 <li class="md-nav__item">
 <a class="md-nav__link" href="#quickhttp.core.run_timed_http_server">
     run_timed_http_server()
-  </a>
-</li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="#quickhttp.core.working_directory">
-    working_directory()
   </a>
 </li>
 </ul>
@@ -172,16 +191,42 @@
 <div class="md-sidebar__inner">
 <nav aria-label="Table of contents" class="md-nav md-nav--secondary">
 <label class="md-nav__title" for="__toc">
-<span class="md-nav__icon md-icon">
-<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"></path></svg>
-</span>
+<span class="md-nav__icon md-icon"></span>
       Table of contents
     </label>
 <ul class="md-nav__list" data-md-scrollfix="">
 <li class="md-nav__item">
+<a class="md-nav__link" href="#quickhttp.core.DirectoryHTTPRequestHandler">
+    DirectoryHTTPRequestHandler
+  </a>
+<nav aria-label="DirectoryHTTPRequestHandler" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#quickhttp.core.DirectoryHTTPRequestHandler.translate_path">
+    translate_path()
+  </a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
 <a class="md-nav__link" href="#quickhttp.core.SearchType">
     SearchType
   </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#quickhttp.core.TimedHTTPServer">
+    TimedHTTPServer
+  </a>
+<nav aria-label="TimedHTTPServer" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#quickhttp.core.TimedHTTPServer.handle_timeout">
+    handle_timeout()
+  </a>
+</li>
+</ul>
+</nav>
 </li>
 <li class="md-nav__item">
 <a class="md-nav__link" href="#quickhttp.core.find_available_port">
@@ -196,11 +241,6 @@
 <li class="md-nav__item">
 <a class="md-nav__link" href="#quickhttp.core.run_timed_http_server">
     run_timed_http_server()
-  </a>
-</li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="#quickhttp.core.working_directory">
-    working_directory()
   </a>
 </li>
 </ul>
@@ -219,23 +259,132 @@
 <div class="doc doc-contents first">
 <div class="doc doc-children">
 <div class="doc doc-object doc-class">
+<h2 class="doc doc-heading" id="quickhttp.core.DirectoryHTTPRequestHandler">
+<code>DirectoryHTTPRequestHandler</code>
+</h2>
+<div class="doc doc-contents">
+<p>Subclass of http.server.SimpleHTTPRequestHandler that accepts a directory. Necessary
+because Python 3.6 doesn't support the directory argument added in Python 3.7.</p>
+<div class="doc doc-children">
+<div class="doc doc-object doc-method">
+<h3 class="doc doc-heading" id="quickhttp.core.DirectoryHTTPRequestHandler.translate_path">
+<code class="highlight language-python">
+translate_path<span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span> </code>
+</h3>
+<div class="doc doc-contents">
+<p>Translate a /-separated PATH to the local filename syntax.</p>
+<p>Components that mean special things to the local file system
+(e.g. drive or directory names) are ignored.  (XXX They should
+probably be diagnosed.)</p>
+<details class="quote">
+<summary>Source code in <code>quickhttp/core.py</code></summary>
+<table class="highlighttable">
+<tr>
+<td class="linenos">
+<div class="linenodiv">
+<pre><span></span>144
+145
+146
+147</pre>
+</div>
+</td>
+<td class="code">
+<div class="highlight">
+<pre><span></span><code><span class="k">def</span> <span class="nf">translate_path</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
+    <span class="n">path</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">translate_path</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+    <span class="n">rel_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">path</span><span class="p">)</span><span class="o">.</span><span class="n">relative_to</span><span class="p">(</span><span class="n">Path</span><span class="o">.</span><span class="n">cwd</span><span class="p">())</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">directory</span> <span class="o">/</span> <span class="n">rel_path</span>
+</code></pre>
+</div>
+</td>
+</tr>
+</table>
+</details>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="doc doc-object doc-class">
 <h2 class="doc doc-heading" id="quickhttp.core.SearchType">
 <code>SearchType</code>
 </h2>
 <div class="doc doc-contents">
 <p>Available types of search for <a href="https://jayqi.github.io/quickhttp/api-reference/#quickhttp.core.find_available_port">find_available_port</a></p>
-<pre><code>Attributes:
-    sequential: Search ports sequentially, starting with range_min.
-    random: Search ports randomly within [range_min, range_max].
-</code></pre>
+<p><strong>Attributes:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>sequential</code></td>
+<td><code></code></td>
+<td>
+<p>Search ports sequentially, starting with range_min.</p>
+</td>
+</tr>
+<tr>
+<td><code>random</code></td>
+<td><code></code></td>
+<td>
+<p>Search ports randomly within [range_min, range_max].</p>
+</td>
+</tr>
+</tbody>
+</table>
 <div class="doc doc-children">
+</div>
+</div>
+</div>
+<div class="doc doc-object doc-class">
+<h2 class="doc doc-heading" id="quickhttp.core.TimedHTTPServer">
+<code>TimedHTTPServer</code>
+</h2>
+<div class="doc doc-contents">
+<p>Subclass of http.server.HTTPServer that tracks timeout status.</p>
+<div class="doc doc-children">
+<div class="doc doc-object doc-method">
+<h3 class="doc doc-heading" id="quickhttp.core.TimedHTTPServer.handle_timeout">
+<code class="highlight language-python">
+handle_timeout<span class="p">(</span><span class="bp">self</span><span class="p">)</span> </code>
+</h3>
+<div class="doc doc-contents">
+<p>Called if no new request arrives within self.timeout.</p>
+<p>Overridden by ForkingMixIn.</p>
+<details class="quote">
+<summary>Source code in <code>quickhttp/core.py</code></summary>
+<table class="highlighttable">
+<tr>
+<td class="linenos">
+<div class="linenodiv">
+<pre><span></span>131
+132</pre>
+</div>
+</td>
+<td class="code">
+<div class="highlight">
+<pre><span></span><code><span class="k">def</span> <span class="nf">handle_timeout</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">timeout_reached</span> <span class="o">=</span> <span class="kc">True</span>
+</code></pre>
+</div>
+</td>
+</tr>
+</table>
+</details>
+</div>
+</div>
 </div>
 </div>
 </div>
 <div class="doc doc-object doc-function">
 <h2 class="doc doc-heading" id="quickhttp.core.find_available_port">
 <code class="highlight language-python">
-find_available_port<span class="p">(</span><span class="n">range_min</span><span class="o">=</span><span class="mi">8000</span><span class="p">,</span> <span class="n">range_max</span><span class="o">=</span><span class="mi">8999</span><span class="p">,</span> <span class="n">max_tries</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">search_type</span><span class="o">=</span><span class="s1">'sequential'</span><span class="p">)</span> </code>
+find_available_port<span class="p">(</span><span class="n">range_min</span><span class="o">=</span><span class="mi">8000</span><span class="p">,</span> <span class="n">range_max</span><span class="o">=</span><span class="mi">8999</span><span class="p">,</span> <span class="n">max_tries</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">search_type</span><span class="o">=&lt;</span><span class="n">SearchType</span><span class="o">.</span><span class="n">sequential</span><span class="p">:</span> <span class="s1">'sequential'</span><span class="o">&gt;</span><span class="p">)</span> </code>
 </h2>
 <div class="doc doc-contents">
 <p>Searches for an available port (not in use) on the local host.</p>
@@ -285,7 +434,7 @@ find_available_port<span class="p">(</span><span class="n">range_min</span><span
 [sequential|random]. Defaults to
 sequential.</p>
 </td>
-<td><code>'sequential'</code></td>
+<td><code>&lt;SearchType.sequential: 'sequential'&gt;</code></td>
 </tr>
 </tbody>
 </table>
@@ -335,10 +484,7 @@ sequential.</p>
 <tr>
 <td class="linenos">
 <div class="linenodiv">
-<pre><span></span>61
-62
-63
-64
+<pre><span></span>64
 65
 66
 67
@@ -361,7 +507,11 @@ sequential.</p>
 84
 85
 86
-87</pre>
+87
+88
+89
+90
+91</pre>
 </div>
 </td>
 <td class="code">
@@ -374,6 +524,7 @@ sequential.</p>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
     <span class="n">max_tries</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">max_tries</span><span class="p">,</span> <span class="n">range_max</span> <span class="o">-</span> <span class="n">range_min</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
 
+    <span class="n">to_try</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span>
     <span class="k">if</span> <span class="n">search_type</span> <span class="o">==</span> <span class="n">SearchType</span><span class="o">.</span><span class="n">sequential</span><span class="p">:</span>
         <span class="n">to_try</span> <span class="o">=</span> <span class="n">islice</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">range_min</span><span class="p">,</span> <span class="n">range_max</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span> <span class="n">max_tries</span><span class="p">)</span>
     <span class="k">elif</span> <span class="n">search_type</span> <span class="o">==</span> <span class="n">SearchType</span><span class="o">.</span><span class="n">random</span><span class="p">:</span>
@@ -454,7 +605,10 @@ means something is using the port.</p>
 <tr>
 <td class="linenos">
 <div class="linenodiv">
-<pre><span></span>27
+<pre><span></span>24
+25
+26
+27
 28
 29
 30
@@ -466,10 +620,7 @@ means something is using the port.</p>
 36
 37
 38
-39
-40
-41
-42</pre>
+39</pre>
 </div>
 </td>
 <td class="code">
@@ -501,10 +652,11 @@ means something is using the port.</p>
 <div class="doc doc-object doc-function">
 <h2 class="doc doc-heading" id="quickhttp.core.run_timed_http_server">
 <code class="highlight language-python">
-run_timed_http_server<span class="p">(</span><span class="n">address</span><span class="p">,</span> <span class="n">port</span><span class="p">,</span> <span class="n">directory</span><span class="p">,</span> <span class="n">time</span><span class="p">)</span> </code>
+run_timed_http_server<span class="p">(</span><span class="n">address</span><span class="p">,</span> <span class="n">port</span><span class="p">,</span> <span class="n">directory</span><span class="p">,</span> <span class="n">timeout</span><span class="p">)</span> </code>
 </h2>
 <div class="doc doc-contents">
-<p>Start a <a href="https://docs.python.org/3/library/http.server.html">HTTPServer</a> for specified time.</p>
+<p>Start a <a href="https://docs.python.org/3/library/http.server.html">HTTPServer</a> with specified
+timeout.</p>
 <p><strong>Parameters:</strong></p>
 <table>
 <thead>
@@ -534,14 +686,14 @@ run_timed_http_server<span class="p">(</span><span class="n">address</span><span
 </tr>
 <tr>
 <td><code>directory</code></td>
-<td><code>Path</code></td>
+<td><code>Union[str, os.PathLike]</code></td>
 <td>
 <p>Directory to serve.</p>
 </td>
 <td><em>required</em></td>
 </tr>
 <tr>
-<td><code>time</code></td>
+<td><code>timeout</code></td>
 <td><code>int</code></td>
 <td>
 <p>Time to keep server alive for, in seconds.</p>
@@ -556,122 +708,62 @@ run_timed_http_server<span class="p">(</span><span class="n">address</span><span
 <tr>
 <td class="linenos">
 <div class="linenodiv">
-<pre><span></span>128
-129
-130
-131
-132
-133
-134
-135
-136
-137
-138
-139
-140
-141
-142
-143
-144
-145
-146
-147</pre>
+<pre><span></span>150
+151
+152
+153
+154
+155
+156
+157
+158
+159
+160
+161
+162
+163
+164
+165
+166
+167
+168
+169
+170
+171
+172
+173
+174
+175</pre>
 </div>
 </td>
 <td class="code">
 <div class="highlight">
-<pre><span></span><code><span class="k">def</span> <span class="nf">run_timed_http_server</span><span class="p">(</span><span class="n">address</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">port</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">directory</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span> <span class="n">time</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
-    <span class="sd">"""Start a [HTTPServer](https://docs.python.org/3/library/http.server.html) for specified time.</span>
+<pre><span></span><code><span class="k">def</span> <span class="nf">run_timed_http_server</span><span class="p">(</span>
+    <span class="n">address</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">port</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">directory</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">PathLike</span><span class="p">],</span> <span class="n">timeout</span><span class="p">:</span> <span class="nb">int</span>
+<span class="p">):</span>
+    <span class="sd">"""Start a [HTTPServer](https://docs.python.org/3/library/http.server.html) with specified</span>
+<span class="sd">    timeout.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        address (str): Address to bind the server to.</span>
 <span class="sd">        port (int): Port to use.</span>
-<span class="sd">        directory (Path): Directory to serve.</span>
-<span class="sd">        time (int): Time to keep server alive for, in seconds.</span>
+<span class="sd">        directory (Union[str, os.PathLike]): Directory to serve.</span>
+<span class="sd">        timeout (int): Time to keep server alive for, in seconds.</span>
 <span class="sd">    """</span>
-    <span class="n">httpd</span> <span class="o">=</span> <span class="n">HTTPServer</span><span class="p">(</span>
-        <span class="n">server_address</span><span class="o">=</span><span class="p">(</span><span class="n">address</span><span class="p">,</span> <span class="n">port</span><span class="p">),</span> <span class="n">RequestHandlerClass</span><span class="o">=</span><span class="n">SimpleHTTPRequestHandler</span>
-    <span class="p">)</span>
-    <span class="k">with</span> <span class="n">working_directory</span><span class="p">(</span><span class="n">directory</span><span class="p">):</span>
-        <span class="n">thread</span> <span class="o">=</span> <span class="n">Thread</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="n">httpd</span><span class="o">.</span><span class="n">serve_forever</span><span class="p">,</span> <span class="n">daemon</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="n">thread</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="n">sleep</span><span class="p">(</span><span class="n">time</span><span class="p">)</span>
-        <span class="k">except</span> <span class="ne">KeyboardInterrupt</span><span class="p">:</span>
-            <span class="k">pass</span>
-        <span class="n">httpd</span><span class="o">.</span><span class="n">shutdown</span><span class="p">()</span>
-</code></pre>
-</div>
-</td>
-</tr>
-</table>
-</details>
-</div>
-</div>
-<div class="doc doc-object doc-function">
-<h2 class="doc doc-heading" id="quickhttp.core.working_directory">
-<code class="highlight language-python">
-working_directory<span class="p">(</span><span class="n">directory</span><span class="p">)</span> </code>
-</h2>
-<div class="doc doc-contents">
-<p>Context manager that changes working directory and returns to previous on exit.</p>
-<p><strong>Parameters:</strong></p>
-<table>
-<thead>
-<tr>
-<th>Name</th>
-<th>Type</th>
-<th>Description</th>
-<th>Default</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>directory</code></td>
-<td><code>Path</code></td>
-<td>
-<p>Directory to temporarily change to.</p>
-</td>
-<td><em>required</em></td>
-</tr>
-</tbody>
-</table>
-<details class="quote">
-<summary>Source code in <code>quickhttp/core.py</code></summary>
-<table class="highlighttable">
-<tr>
-<td class="linenos">
-<div class="linenodiv">
-<pre><span></span>113
-114
-115
-116
-117
-118
-119
-120
-121
-122
-123
-124
-125</pre>
-</div>
-</td>
-<td class="code">
-<div class="highlight">
-<pre><span></span><code><span class="nd">@contextmanager</span>
-<span class="k">def</span> <span class="nf">working_directory</span><span class="p">(</span><span class="n">directory</span><span class="p">:</span> <span class="n">Path</span><span class="p">):</span>
-    <span class="sd">"""Context manager that changes working directory and returns to previous on exit.</span>
+    <span class="k">if</span> <span class="n">sys</span><span class="o">.</span><span class="n">version_info</span><span class="p">[:</span><span class="mi">2</span><span class="p">]</span> <span class="o">==</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">6</span><span class="p">):</span>
+        <span class="n">handler</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span><span class="n">DirectoryHTTPRequestHandler</span><span class="p">,</span> <span class="n">directory</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">directory</span><span class="p">))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">handler</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span><span class="n">SimpleHTTPRequestHandler</span><span class="p">,</span> <span class="n">directory</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">directory</span><span class="p">))</span>
 
-<span class="sd">    Args:</span>
-<span class="sd">        directory (Path): Directory to temporarily change to.</span>
-<span class="sd">    """</span>
-    <span class="n">prev_cwd</span> <span class="o">=</span> <span class="n">Path</span><span class="o">.</span><span class="n">cwd</span><span class="p">()</span>
-    <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="n">directory</span><span class="p">)</span>
-    <span class="k">try</span><span class="p">:</span>
-        <span class="k">yield</span>
-    <span class="k">finally</span><span class="p">:</span>
-        <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="n">prev_cwd</span><span class="p">)</span>
+    <span class="k">with</span> <span class="n">TimedHTTPServer</span><span class="p">(</span>
+        <span class="n">server_address</span><span class="o">=</span><span class="p">(</span><span class="n">address</span><span class="p">,</span> <span class="n">port</span><span class="p">),</span> <span class="n">RequestHandlerClass</span><span class="o">=</span><span class="n">handler</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="n">timeout</span>
+    <span class="p">)</span> <span class="k">as</span> <span class="n">httpd</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">while</span> <span class="ow">not</span> <span class="n">httpd</span><span class="o">.</span><span class="n">timeout_reached</span><span class="p">:</span>  <span class="c1"># type: ignore</span>
+                <span class="n">httpd</span><span class="o">.</span><span class="n">handle_request</span><span class="p">()</span>
+            <span class="n">typer</span><span class="o">.</span><span class="n">echo</span><span class="p">(</span><span class="s2">"Timeout reached."</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">KeyboardInterrupt</span><span class="p">:</span>
+            <span class="n">typer</span><span class="o">.</span><span class="n">echo</span><span class="p">(</span><span class="s2">" KeyboardInterrupt received."</span><span class="p">)</span>
 </code></pre>
 </div>
 </td>
@@ -718,14 +810,14 @@ working_directory<span class="p">(</span><span class="n">directory</span><span c
 </div>
 </footer>
 </div>
-<script src="../assets/javascripts/vendor.d710d30a.min.js"></script>
-<script src="../assets/javascripts/bundle.b39636ac.min.js"></script><script id="__lang" type="application/json">{"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents"}</script>
+<script src="../assets/javascripts/vendor.3636a4ec.min.js"></script>
+<script src="../assets/javascripts/bundle.e9fe3281.min.js"></script><script id="__lang" type="application/json">{"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents"}</script>
 <script>
         app = initialize({
           base: "..",
           features: [],
           search: Object.assign({
-            worker: "../assets/javascripts/worker/search.a68abb33.min.js"
+            worker: "../assets/javascripts/worker/search.5eca75d3.min.js"
           }, typeof search !== "undefined" && search)
         })
       </script>

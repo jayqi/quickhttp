@@ -7,9 +7,9 @@
 <meta content="width=device-width,initial-scale=1" name="viewport"/>
 <link href="https://jayqi.github.io/quickhttp/" rel="canonical"/>
 <link href="assets/images/favicon.png" rel="shortcut icon"/>
-<meta content="mkdocs-1.1.2, mkdocs-material-5.4.0" name="generator"/>
+<meta content="mkdocs-1.1.2, mkdocs-material-5.5.12" name="generator"/>
 <title>quickhttp</title>
-<link href="assets/stylesheets/main.fe0cca5b.min.css" rel="stylesheet"/>
+<link href="assets/stylesheets/main.4dd2dd8d.min.css" rel="stylesheet"/>
 <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
 <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700%7CRoboto+Mono&amp;display=fallback" rel="stylesheet"/>
 <style>body,input{font-family:"Roboto",-apple-system,BlinkMacSystemFont,Helvetica,Arial,sans-serif}code,kbd,pre{font-family:"Roboto Mono",SFMono-Regular,Consolas,Menlo,monospace}</style>
@@ -114,18 +114,14 @@
 <input class="md-nav__toggle md-toggle" data-md-toggle="toc" id="__toc" type="checkbox"/>
 <label class="md-nav__link md-nav__link--active" for="__toc">
         Home
-        <span class="md-nav__icon md-icon">
-<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M3 9h14V7H3v2m0 4h14v-2H3v2m0 4h14v-2H3v2m16 0h2v-2h-2v2m0-10v2h2V7h-2m0 6h2v-2h-2v2z"></path></svg>
-</span>
+        <span class="md-nav__icon md-icon"></span>
 </label>
 <a class="md-nav__link md-nav__link--active" href="." title="Home">
       Home
     </a>
 <nav aria-label="Table of contents" class="md-nav md-nav--secondary">
 <label class="md-nav__title" for="__toc">
-<span class="md-nav__icon md-icon">
-<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"></path></svg>
-</span>
+<span class="md-nav__icon md-icon"></span>
       Table of contents
     </label>
 <ul class="md-nav__list" data-md-scrollfix="">
@@ -176,9 +172,7 @@
 <div class="md-sidebar__inner">
 <nav aria-label="Table of contents" class="md-nav md-nav--secondary">
 <label class="md-nav__title" for="__toc">
-<span class="md-nav__icon md-icon">
-<svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"></path></svg>
-</span>
+<span class="md-nav__icon md-icon"></span>
       Table of contents
     </label>
 <ul class="md-nav__list" data-md-scrollfix="">
@@ -223,11 +217,11 @@
 </a>
 <h1 id="quickhttp">quickhttp</h1>
 <p><a href="https://github.com/jayqi/quickhttp/actions?query=workflow%3Atests+branch%3Amaster"><img alt="tests" src="https://github.com/jayqi/quickhttp/workflows/tests/badge.svg?branch=master"/></a> <a href="https://codecov.io/gh/jayqi/quickhttp"><img alt="codecov" src="https://codecov.io/gh/jayqi/quickhttp/branch/master/graph/badge.svg"/></a> <a href="https://pypi.org/project/quickhttp/"><img alt="PyPI" src="https://img.shields.io/pypi/v/quickhttp.svg"/></a></p>
-<p><code>quickhttp</code> is a lightweight CLI that wraps Python's <code>http.server</code> with automatic port-finding and automatic shutdown after a certain duration.</p>
+<p><code>quickhttp</code> is a lightweight CLI that wraps Python's <code>http.server</code> with automatic port-finding and automatic shutdown after a configurable idle duration.</p>
 <h2 id="features">Features</h2>
 <ul>
 <li>Automatically finds and uses an available port.</li>
-<li>Has a keep-alive time and shuts down automatically, in case you forget about it.</li>
+<li>Has a keep-alive time after which it will shut down automatically if no requests are received, in case you forget about it.</li>
 <li>More secure default of <code>127.0.0.1</code> (<code>localhost</code>) instead of <code>0.0.0.0</code>.</li>
 <li>Easier to type and autocomplete than <code>python -m http.server</code>.</li>
 </ul>
@@ -255,9 +249,10 @@ Arguments:
   [DIRECTORY]  Directory to serve.  [default: .]
 
 Options:
-  -t, --time TEXT                 Time to keep server alive for. Accepts time
-                                  expressions parsable by pytimeparse, such as
-                                  '10m' or '10:00'.  [default: 10m]
+  -t, --timeout TEXT              Time to keep server alive for after most
+                                  recent request. Accepts time expressions
+                                  parsable by pytime parse, such as '10m' or
+                                  '10:00'.  [default: 10m]
 
   -b, --bind TEXT                 Address to bind server to. '127.0.0.1' (or
                                   'localhost') will only be accessible from
@@ -296,10 +291,10 @@ Options:
 </code></pre>
 <h2 id="why-use-quickhttp">Why use <code>quickhttp</code>?</h2>
 <ul>
-<li><code>python -m http.server</code> is a pain to type. <code>quickhttp</code> is shorter and can autocomplete. (But you can still do <code>pythom -m quickhttp</code> too if you really want to.)</li>
+<li><code>python -m http.server</code> is a pain to type. <code>quickhttp</code> is shorter and can autocomplete. (But you can still do <code>python -m quickhttp</code> too if you really want to.)</li>
 <li>If you try starting <code>python -m http.server</code> and port 8000 is unavailable, you get <code>OSError: [Errno 48] Address already in use</code>. Then you have to choose another port and try again. <code>quickhttp</code> deals with ports automatically for you.</li>
-<li><code>quickhttp</code> will automatically shutdown after the keep-alive time expires. This defaults to 10 minutes. I often will start up an HTTP server to look at something, and then I open a new tab to continue doing things, and then I forget about the server.</li>
-<li><code>python -m http.server</code> defaults to 0.0.0.0, which makes your server accessible to other people at your computer's IP address. This is a security vulnerability, but isn't obvious to people who don't know about 0.0.0.0 and 127.0.0.1.</li>
+<li><code>quickhttp</code> will automatically shutdown after the keep-alive time expires. This defaults to 10 minutes. I often start up an HTTP server to look at something, then open a new tab to continue doing things, and then I forget about the server.</li>
+<li><code>python -m http.server</code> defaults to 0.0.0.0, which makes your server accessible to other people at your computer's IP address. This is a security vulnerability, but isn't necessarily obvious to people who just want to quickly serve some static files.</li>
 </ul>
 </article>
 </div>
@@ -336,14 +331,14 @@ Options:
 </div>
 </footer>
 </div>
-<script src="assets/javascripts/vendor.d710d30a.min.js"></script>
-<script src="assets/javascripts/bundle.b39636ac.min.js"></script><script id="__lang" type="application/json">{"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents"}</script>
+<script src="assets/javascripts/vendor.3636a4ec.min.js"></script>
+<script src="assets/javascripts/bundle.e9fe3281.min.js"></script><script id="__lang" type="application/json">{"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents"}</script>
 <script>
         app = initialize({
           base: ".",
           features: [],
           search: Object.assign({
-            worker: "assets/javascripts/worker/search.a68abb33.min.js"
+            worker: "assets/javascripts/worker/search.5eca75d3.min.js"
           }, typeof search !== "undefined" && search)
         })
       </script>

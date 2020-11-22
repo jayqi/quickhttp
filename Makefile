@@ -26,6 +26,7 @@ docs: clean-docs
 
 docs-release: clean-docs
 	cp README.md docs/index.md
+	mike delete latest || true
 	mike deploy $(VERSION) latest --push
 
 docs-dev: clean-docs

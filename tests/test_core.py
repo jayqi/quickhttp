@@ -76,6 +76,7 @@ def test_run_timed_http_server(timed_http_server):
     assert not is_port_available(port)
     response = requests.get(f"http://127.0.0.1:{port}")
     assert response.status_code == 200
+    response.encoding = "utf-8"
     assert response.encoding == "utf-8"
     with (directory / "index.html").open("r") as fp:
         assert response.text == fp.read()

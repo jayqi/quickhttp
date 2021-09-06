@@ -71,14 +71,19 @@ jobs:
       - name: Test building package
         run: |
           poetry run make build
+          if [[ ${{ matrix.os }} == "windows-latest" ]]; then
+            PYTHON_BIN=Scripts/python
+          else
+            PYTHON_BIN=bin/python
+          fi
           # Test wheel install
           python -m venv wheel-env
-          wheel-env/bin/python -m pip install dist/quickhttp-*.whl
-          wheel-env/bin/python -m quickhttp --version
+          wheel-env/$PYTHON_BIN -m pip install dist/quickhttp-*.whl
+          wheel-env/$PYTHON_BIN -m quickhttp --version
           # Test source install
           python -m venv source-env
-          source-env/bin/python -m pip install dist/quickhttp-*.tar.gz
-          source-env/bin/python -m quickhttp --version
+          source-env/$PYTHON_BIN -m pip install dist/quickhttp-*.tar.gz
+          source-env/$PYTHON_BIN -m quickhttp --version
 
       - name: Upload coverage to codecov
         if: ${{ matrix.os == 'ubuntu-latest'}}

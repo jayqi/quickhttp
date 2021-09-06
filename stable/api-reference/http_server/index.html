@@ -9,21 +9,21 @@
       
       
       
-        <link rel="canonical" href="https://jayqi.github.io/quickhttp/v0.2/api-reference/">
+        <link rel="canonical" href="https://jayqi.github.io/quickhttp/v1.0/api-reference/http_server/">
       
-      <link rel="icon" href="../assets/images/favicon.png">
+      <link rel="icon" href="../../assets/images/favicon.png">
       <meta name="generator" content="mkdocs-1.2.2, mkdocs-material-7.2.6">
     
     
       
-        <title>API Reference - quickhttp</title>
+        <title>quickhttp.http_server - quickhttp</title>
       
     
     
-      <link rel="stylesheet" href="../assets/stylesheets/main.802231af.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.802231af.min.css">
       
         
-        <link rel="stylesheet" href="../assets/stylesheets/palette.3f5d1f46.min.css">
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.3f5d1f46.min.css">
         
       
     
@@ -38,7 +38,9 @@
     
     
     
-      <link rel="stylesheet" href="../assets/_mkdocstrings.css">
+      <link rel="stylesheet" href="../../assets/_mkdocstrings.css">
+    
+      <link rel="stylesheet" href="../../css/custom_mkdocstrings.css">
     
     
       
@@ -57,7 +59,7 @@
     <body dir="ltr" data-md-color-scheme="" data-md-color-primary="none" data-md-color-accent="none">
   
     
-    <script>function __prefix(e){return new URL("..",location).pathname+"."+e}function __get(e,t=localStorage){return JSON.parse(t.getItem(__prefix(e)))}</script>
+    <script>function __prefix(e){return new URL("../..",location).pathname+"."+e}function __get(e,t=localStorage){return JSON.parse(t.getItem(__prefix(e)))}</script>
     
     <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
     <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
@@ -65,7 +67,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#api-reference" class="md-skip">
+        <a href="#quickhttphttp_server" class="md-skip">
           Skip to content
         </a>
       
@@ -76,7 +78,7 @@
     
       <header class="md-header" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href=".." title="quickhttp" class="md-header__button md-logo" aria-label="quickhttp" data-md-component="logo">
+    <a href="../.." title="quickhttp" class="md-header__button md-logo" aria-label="quickhttp" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54z"/></svg>
@@ -95,7 +97,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              API Reference
+              quickhttp.http_server
             
           </span>
         </div>
@@ -173,7 +175,7 @@
 
 <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href=".." title="quickhttp" class="md-nav__button md-logo" aria-label="quickhttp" data-md-component="logo">
+    <a href="../.." title="quickhttp" class="md-nav__button md-logo" aria-label="quickhttp" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54z"/></svg>
@@ -205,7 +207,7 @@
   
   
     <li class="md-nav__item">
-      <a href=".." class="md-nav__link">
+      <a href="../.." class="md-nav__link">
         Home
       </a>
     </li>
@@ -221,6 +223,41 @@
     
   
   
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2" type="checkbox" id="__nav_2" checked>
+      
+      <label class="md-nav__link" for="__nav_2">
+        API Reference
+        <span class="md-nav__icon md-icon"></span>
+      </label>
+      <nav class="md-nav" aria-label="API Reference" data-md-level="1">
+        <label class="md-nav__title" for="__nav_2">
+          <span class="md-nav__icon md-icon"></span>
+          API Reference
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../exceptions/" class="md-nav__link">
+        quickhttp.exceptions
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+    
+  
+  
     <li class="md-nav__item md-nav__item--active">
       
       <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
@@ -230,12 +267,12 @@
       
       
         <label class="md-nav__link md-nav__link--active" for="__toc">
-          API Reference
+          quickhttp.http_server
           <span class="md-nav__icon md-icon"></span>
         </label>
       
       <a href="./" class="md-nav__link md-nav__link--active">
-        API Reference
+        quickhttp.http_server
       </a>
       
         
@@ -253,43 +290,30 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#quickhttp.core.DirectoryHTTPRequestHandler" class="md-nav__link">
-    DirectoryHTTPRequestHandler
+  <a href="#quickhttp.http_server-classes" class="md-nav__link">
+    Classes
   </a>
   
-    <nav class="md-nav" aria-label="DirectoryHTTPRequestHandler">
+    <nav class="md-nav" aria-label="Classes">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#quickhttp.core.DirectoryHTTPRequestHandler.translate_path" class="md-nav__link">
-    translate_path()
+  <a href="#quickhttp.http_server.DirectoryHTTPRequestHandler" class="md-nav__link">
+    DirectoryHTTPRequestHandler
   </a>
   
 </li>
         
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#quickhttp.core.SearchType" class="md-nav__link">
+          <li class="md-nav__item">
+  <a href="#quickhttp.http_server.SearchType" class="md-nav__link">
     SearchType
   </a>
   
 </li>
-      
-        <li class="md-nav__item">
-  <a href="#quickhttp.core.TimedHTTPServer" class="md-nav__link">
-    TimedHTTPServer
-  </a>
-  
-    <nav class="md-nav" aria-label="TimedHTTPServer">
-      <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#quickhttp.core.TimedHTTPServer.handle_timeout" class="md-nav__link">
-    handle_timeout()
+  <a href="#quickhttp.http_server.TimedHTTPServer" class="md-nav__link">
+    TimedHTTPServer
   </a>
   
 </li>
@@ -300,23 +324,36 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#quickhttp.core.find_available_port" class="md-nav__link">
+  <a href="#quickhttp.http_server-functions" class="md-nav__link">
+    Functions
+  </a>
+  
+    <nav class="md-nav" aria-label="Functions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#quickhttp.http_server.find_available_port" class="md-nav__link">
     find_available_port()
   </a>
   
 </li>
-      
-        <li class="md-nav__item">
-  <a href="#quickhttp.core.is_port_available" class="md-nav__link">
+        
+          <li class="md-nav__item">
+  <a href="#quickhttp.http_server.is_port_available" class="md-nav__link">
     is_port_available()
   </a>
   
 </li>
-      
-        <li class="md-nav__item">
-  <a href="#quickhttp.core.run_timed_http_server" class="md-nav__link">
+        
+          <li class="md-nav__item">
+  <a href="#quickhttp.http_server.run_timed_http_server" class="md-nav__link">
     run_timed_http_server()
   </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -324,6 +361,27 @@
   
 </nav>
       
+    </li>
+  
+
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../changelog/" class="md-nav__link">
+        Changelog
+      </a>
     </li>
   
 
@@ -354,43 +412,30 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#quickhttp.core.DirectoryHTTPRequestHandler" class="md-nav__link">
-    DirectoryHTTPRequestHandler
+  <a href="#quickhttp.http_server-classes" class="md-nav__link">
+    Classes
   </a>
   
-    <nav class="md-nav" aria-label="DirectoryHTTPRequestHandler">
+    <nav class="md-nav" aria-label="Classes">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#quickhttp.core.DirectoryHTTPRequestHandler.translate_path" class="md-nav__link">
-    translate_path()
+  <a href="#quickhttp.http_server.DirectoryHTTPRequestHandler" class="md-nav__link">
+    DirectoryHTTPRequestHandler
   </a>
   
 </li>
         
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#quickhttp.core.SearchType" class="md-nav__link">
+          <li class="md-nav__item">
+  <a href="#quickhttp.http_server.SearchType" class="md-nav__link">
     SearchType
   </a>
   
 </li>
-      
-        <li class="md-nav__item">
-  <a href="#quickhttp.core.TimedHTTPServer" class="md-nav__link">
-    TimedHTTPServer
-  </a>
-  
-    <nav class="md-nav" aria-label="TimedHTTPServer">
-      <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#quickhttp.core.TimedHTTPServer.handle_timeout" class="md-nav__link">
-    handle_timeout()
+  <a href="#quickhttp.http_server.TimedHTTPServer" class="md-nav__link">
+    TimedHTTPServer
   </a>
   
 </li>
@@ -401,23 +446,36 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#quickhttp.core.find_available_port" class="md-nav__link">
+  <a href="#quickhttp.http_server-functions" class="md-nav__link">
+    Functions
+  </a>
+  
+    <nav class="md-nav" aria-label="Functions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#quickhttp.http_server.find_available_port" class="md-nav__link">
     find_available_port()
   </a>
   
 </li>
-      
-        <li class="md-nav__item">
-  <a href="#quickhttp.core.is_port_available" class="md-nav__link">
+        
+          <li class="md-nav__item">
+  <a href="#quickhttp.http_server.is_port_available" class="md-nav__link">
     is_port_available()
   </a>
   
 </li>
-      
-        <li class="md-nav__item">
-  <a href="#quickhttp.core.run_timed_http_server" class="md-nav__link">
+        
+          <li class="md-nav__item">
+  <a href="#quickhttp.http_server.run_timed_http_server" class="md-nav__link">
     run_timed_http_server()
   </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -433,13 +491,13 @@
             <article class="md-content__inner md-typeset">
               
                 
-                  <a href="https://github.com/jayqi/quickhttp/edit/master/docs/api-reference.md" title="Edit this page" class="md-content__button md-icon">
+                  <a href="https://github.com/jayqi/quickhttp/edit/master/docs/api-reference/http_server.md" title="Edit this page" class="md-content__button md-icon">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25z"/></svg>
                   </a>
                 
                 
-                <h1 id="api-reference">API Reference</h1>
-<p>Documentation for <code>quickhttp.core</code> module.</p>
+                <h1 id="quickhttphttp_server">quickhttp.http_server<a class="headerlink" href="#quickhttphttp_server" title="Permanent link">&para;</a></h1>
+<p>Documentation for <code>quickhttp.http_server</code> module.</p>
 
 
   <div class="doc doc-object doc-module">
@@ -460,24 +518,24 @@
 
 
 
-
-
+<h2 id="quickhttp.http_server-classes">Classes<a href="#quickhttp.http_server-classes" class="headerlink" title="Permanent link">&para;</a></h2>
 
   <div class="doc doc-object doc-class">
 
 
 
-<h2 class="doc doc-heading" id="quickhttp.core.DirectoryHTTPRequestHandler">
+<h3 id="quickhttp.http_server.DirectoryHTTPRequestHandler" class="doc doc-heading">
         <code>DirectoryHTTPRequestHandler</code>
 
 
 
-</h2>
+<a href="#quickhttp.http_server.DirectoryHTTPRequestHandler" class="headerlink" title="Permanent link">&para;</a></h3>
 
     <div class="doc doc-contents ">
 
-      <p>Subclass of http.server.SimpleHTTPRequestHandler that accepts a directory. Necessary
-because Python 3.6 doesn't support the directory argument added in Python 3.7.</p>
+      <p>Subclass of <a href="https://docs.python.org/3/library/http.server.html#http.server.SimpleHTTPRequestHandler">http.server.SimpleHTTPRequestHandler</a>
+that accepts a directory. Necessary because Python 3.6 doesn't support the directory argument
+added in Python 3.7.</p>
 
 
 
@@ -490,18 +548,18 @@ because Python 3.6 doesn't support the directory argument added in Python 3.7.</
 
 
 
-
+<h4 id="quickhttp.http_server.DirectoryHTTPRequestHandler-methods">Methods<a href="#quickhttp.http_server.DirectoryHTTPRequestHandler-methods" class="headerlink" title="Permanent link">&para;</a></h4>
 
 
   <div class="doc doc-object doc-method">
 
 
 
-<h3 class="doc doc-heading" id="quickhttp.core.DirectoryHTTPRequestHandler.translate_path">
+<h5 id="quickhttp.http_server.DirectoryHTTPRequestHandler.translate_path" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">translate_path</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span></code>
 
 
-</h3>
+<a href="#quickhttp.http_server.DirectoryHTTPRequestHandler.translate_path" class="headerlink" title="Permanent link">&para;</a></h5>
 
     <div class="doc doc-contents ">
 
@@ -511,7 +569,7 @@ because Python 3.6 doesn't support the directory argument added in Python 3.7.</
 probably be diagnosed.)</p>
 
         <details class="quote">
-          <summary>Source code in <code>quickhttp/core.py</code></summary>
+          <summary>Source code in <code>quickhttp/http_server.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">translate_path</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
     <span class="n">path</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">translate_path</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
     <span class="n">rel_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">path</span><span class="p">)</span><span class="o">.</span><span class="n">relative_to</span><span class="p">(</span><span class="n">Path</span><span class="o">.</span><span class="n">cwd</span><span class="p">())</span>
@@ -534,21 +592,21 @@ probably be diagnosed.)</p>
 
 
 
-
   <div class="doc doc-object doc-class">
 
 
 
-<h2 class="doc doc-heading" id="quickhttp.core.SearchType">
+<h3 id="quickhttp.http_server.SearchType" class="doc doc-heading">
         <code>SearchType</code>
 
 
 
-</h2>
+<a href="#quickhttp.http_server.SearchType" class="headerlink" title="Permanent link">&para;</a></h3>
 
     <div class="doc doc-contents ">
 
-      <p>Available types of search for <a href="#quickhttp.core.find_available_port">find_available_port</a></p>
+      <p>Enum. Available types of search for
+<a href="#quickhttp.http_server.find_available_port">find_available_port</a>.</p>
 
 <p><strong>Attributes:</strong></p>
 <table>
@@ -563,12 +621,12 @@ probably be diagnosed.)</p>
       <tr>
         <td><code>sequential</code></td>
         <td><code></code></td>
-        <td><p>Search ports sequentially, starting with range_min.</p></td>
+        <td><p>Search ports sequentially in ascending order, starting with range_min.</p></td>
       </tr>
       <tr>
         <td><code>random</code></td>
         <td><code></code></td>
-        <td><p>Search ports randomly within [range_min, range_max].</p></td>
+        <td><p>Search ports randomly within the interval [range_min, range_max].</p></td>
       </tr>
   </tbody>
 </table>
@@ -601,16 +659,17 @@ probably be diagnosed.)</p>
 
 
 
-<h2 class="doc doc-heading" id="quickhttp.core.TimedHTTPServer">
+<h3 id="quickhttp.http_server.TimedHTTPServer" class="doc doc-heading">
         <code>TimedHTTPServer</code>
 
 
 
-</h2>
+<a href="#quickhttp.http_server.TimedHTTPServer" class="headerlink" title="Permanent link">&para;</a></h3>
 
     <div class="doc doc-contents ">
 
-      <p>Subclass of http.server.HTTPServer that tracks timeout status.</p>
+      <p>Subclass of <a href="https://docs.python.org/3/library/http.server.html">http.server.HTTPServer</a>
+that tracks timeout status.</p>
 
 
 
@@ -623,27 +682,27 @@ probably be diagnosed.)</p>
 
 
 
-
+<h4 id="quickhttp.http_server.TimedHTTPServer-methods">Methods<a href="#quickhttp.http_server.TimedHTTPServer-methods" class="headerlink" title="Permanent link">&para;</a></h4>
 
 
   <div class="doc doc-object doc-method">
 
 
 
-<h3 class="doc doc-heading" id="quickhttp.core.TimedHTTPServer.handle_timeout">
+<h5 id="quickhttp.http_server.TimedHTTPServer.handle_timeout" class="doc doc-heading">
 <code class="highlight language-python"><span class="n">handle_timeout</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></code>
 
 
-</h3>
+<a href="#quickhttp.http_server.TimedHTTPServer.handle_timeout" class="headerlink" title="Permanent link">&para;</a></h5>
 
     <div class="doc doc-contents ">
 
       <p>Called if no new request arrives within self.timeout.</p>
-<p>Overridden by ForkingMixIn.</p>
 
         <details class="quote">
-          <summary>Source code in <code>quickhttp/core.py</code></summary>
+          <summary>Source code in <code>quickhttp/http_server.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">handle_timeout</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Called if no new request arrives within self.timeout.&quot;&quot;&quot;</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">timeout_reached</span> <span class="o">=</span> <span class="kc">True</span>
 </code></pre></div>
         </details>
@@ -662,17 +721,17 @@ probably be diagnosed.)</p>
   </div>
 
 
-
+<h2 id="quickhttp.http_server-functions">Functions<a href="#quickhttp.http_server-functions" class="headerlink" title="Permanent link">&para;</a></h2>
 
   <div class="doc doc-object doc-function">
 
 
 
-<h2 class="doc doc-heading" id="quickhttp.core.find_available_port">
-<code class="highlight language-python"><span class="n">find_available_port</span><span class="p">(</span><span class="n">range_min</span><span class="o">=</span><span class="mi">8000</span><span class="p">,</span> <span class="n">range_max</span><span class="o">=</span><span class="mi">8999</span><span class="p">,</span> <span class="n">max_tries</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">search_type</span><span class="o">=&lt;</span><span class="n">SearchType</span><span class="o">.</span><span class="n">sequential</span><span class="p">:</span> <span class="s1">&#39;sequential&#39;</span><span class="o">&gt;</span><span class="p">)</span></code>
+<h3 id="quickhttp.http_server.find_available_port" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">find_available_port</span><span class="p">(</span><span class="n">range_min</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">8000</span><span class="p">,</span> <span class="n">range_max</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">8999</span><span class="p">,</span> <span class="n">max_tries</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">50</span><span class="p">,</span> <span class="n">search_type</span><span class="p">:</span> <span class="n">SearchType</span> <span class="o">=</span> <span class="o">&lt;</span><span class="n">SearchType</span><span class="o">.</span><span class="n">sequential</span><span class="p">:</span> <span class="s1">&#39;sequential&#39;</span><span class="o">&gt;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span></code>
 
 
-</h2>
+<a href="#quickhttp.http_server.find_available_port" class="headerlink" title="Permanent link">&para;</a></h3>
 
     <div class="doc doc-contents ">
 
@@ -730,11 +789,11 @@ sequential.</p></td>
   </thead>
   <tbody>
       <tr>
-        <td><code>ValueError</code></td>
+        <td><code>quickhttp.exceptions.InvalidSearchTypeError</code></td>
         <td><p>If search_type is invalid.</p></td>
       </tr>
       <tr>
-        <td><code>NoAvailablePortFound</code></td>
+        <td><code>quickhttp.exceptions.NoAvailablePortFoundError</code></td>
         <td><p>If no available ports found within max_tries.</p></td>
       </tr>
   </tbody>
@@ -750,12 +809,12 @@ sequential.</p></td>
   <tbody>
     <tr>
       <td><code>int</code></td>
-      <td><p>int: An available port</p></td>
+      <td><p>int: An available port.</p></td>
     </tr>
   </tbody>
 </table>
         <details class="quote">
-          <summary>Source code in <code>quickhttp/core.py</code></summary>
+          <summary>Source code in <code>quickhttp/http_server.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">find_available_port</span><span class="p">(</span>
     <span class="n">range_min</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">DEFAULT_PORT_RANGE_MIN</span><span class="p">,</span>
     <span class="n">range_max</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">DEFAULT_PORT_RANGE_MAX</span><span class="p">,</span>
@@ -774,13 +833,13 @@ sequential.</p></td>
             <span class="sa">f</span><span class="s2">&quot;Invalid search_type </span><span class="si">{</span><span class="n">search_type</span><span class="si">}</span><span class="s2">. Available options are &quot;</span>
             <span class="sa">f</span><span class="s2">&quot;[</span><span class="si">{</span><span class="s1">&#39;|&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">level</span><span class="o">.</span><span class="n">value</span> <span class="k">for</span> <span class="n">level</span> <span class="ow">in</span> <span class="n">SearchType</span><span class="p">)</span><span class="si">}</span><span class="s2">].&quot;</span>
         <span class="p">)</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="n">exceptions</span><span class="o">.</span><span class="n">InvalidSearchTypeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
     <span class="k">for</span> <span class="n">port</span> <span class="ow">in</span> <span class="n">to_try</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">is_port_available</span><span class="p">(</span><span class="n">port</span><span class="o">=</span><span class="n">port</span><span class="p">):</span>
             <span class="k">return</span> <span class="n">port</span>
 
-    <span class="k">raise</span> <span class="n">NoAvailablePortFound</span><span class="p">(</span>
+    <span class="k">raise</span> <span class="n">exceptions</span><span class="o">.</span><span class="n">NoAvailablePortFoundError</span><span class="p">(</span>
         <span class="sa">f</span><span class="s2">&quot;Unable to find available port in range [</span><span class="si">{</span><span class="n">range_min</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">range_max</span><span class="si">}</span><span class="s2">] with &quot;</span>
         <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">SearchType</span><span class="p">(</span><span class="n">search_type</span><span class="p">)</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2"> search in </span><span class="si">{</span><span class="n">max_tries</span><span class="si">}</span><span class="s2"> tries.&quot;</span>
     <span class="p">)</span>
@@ -796,11 +855,11 @@ sequential.</p></td>
 
 
 
-<h2 class="doc doc-heading" id="quickhttp.core.is_port_available">
-<code class="highlight language-python"><span class="n">is_port_available</span><span class="p">(</span><span class="n">port</span><span class="p">)</span></code>
+<h3 id="quickhttp.http_server.is_port_available" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">is_port_available</span><span class="p">(</span><span class="n">port</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span></code>
 
 
-</h2>
+<a href="#quickhttp.http_server.is_port_available" class="headerlink" title="Permanent link">&para;</a></h3>
 
     <div class="doc doc-contents ">
 
@@ -843,7 +902,7 @@ means something is using the port.</p>
   </tbody>
 </table>
         <details class="quote">
-          <summary>Source code in <code>quickhttp/core.py</code></summary>
+          <summary>Source code in <code>quickhttp/http_server.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">is_port_available</span><span class="p">(</span><span class="n">port</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Check if port is available (not in use) on the local host. This is determined by</span>
 <span class="sd">    attemping to create a socket connection with that port. If the connection is successful, that</span>
@@ -872,16 +931,15 @@ means something is using the port.</p>
 
 
 
-<h2 class="doc doc-heading" id="quickhttp.core.run_timed_http_server">
-<code class="highlight language-python"><span class="n">run_timed_http_server</span><span class="p">(</span><span class="n">address</span><span class="p">,</span> <span class="n">port</span><span class="p">,</span> <span class="n">directory</span><span class="p">,</span> <span class="n">timeout</span><span class="p">)</span></code>
+<h3 id="quickhttp.http_server.run_timed_http_server" class="doc doc-heading">
+<code class="highlight language-python"><span class="n">run_timed_http_server</span><span class="p">(</span><span class="n">address</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">port</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">directory</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">PathLike</span><span class="p">],</span> <span class="n">timeout</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span></code>
 
 
-</h2>
+<a href="#quickhttp.http_server.run_timed_http_server" class="headerlink" title="Permanent link">&para;</a></h3>
 
     <div class="doc doc-contents ">
 
-      <p>Start a <a href="https://docs.python.org/3/library/http.server.html">HTTPServer</a> with specified
-timeout.</p>
+      <p>Start a <a href="#quickhttp.http_server.TimedHTTPServer">TimedHTTPServer</a> with specified timeout.</p>
 
 <p><strong>Parameters:</strong></p>
 <table>
@@ -921,12 +979,11 @@ timeout.</p>
   </tbody>
 </table>
         <details class="quote">
-          <summary>Source code in <code>quickhttp/core.py</code></summary>
+          <summary>Source code in <code>quickhttp/http_server.py</code></summary>
           <div class="highlight"><pre><span></span><code><span class="k">def</span> <span class="nf">run_timed_http_server</span><span class="p">(</span>
     <span class="n">address</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">port</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">directory</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">PathLike</span><span class="p">],</span> <span class="n">timeout</span><span class="p">:</span> <span class="nb">int</span>
 <span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Start a [HTTPServer](https://docs.python.org/3/library/http.server.html) with specified</span>
-<span class="sd">    timeout.</span>
+    <span class="sd">&quot;&quot;&quot;Start a [TimedHTTPServer][quickhttp.http_server.TimedHTTPServer] with specified timeout.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        address (str): Address to bind the server to.</span>
@@ -983,7 +1040,7 @@ timeout.</p>
     <nav class="md-footer__inner md-grid" aria-label="Footer">
       
         
-        <a href=".." class="md-footer__link md-footer__link--prev" aria-label="Previous: Home" rel="prev">
+        <a href="../exceptions/" class="md-footer__link md-footer__link--prev" aria-label="Previous: quickhttp.exceptions" rel="prev">
           <div class="md-footer__button md-icon">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
           </div>
@@ -992,11 +1049,26 @@ timeout.</p>
               <span class="md-footer__direction">
                 Previous
               </span>
-              Home
+              quickhttp.exceptions
             </div>
           </div>
         </a>
       
+      
+        
+        <a href="../../changelog/" class="md-footer__link md-footer__link--next" aria-label="Next: Changelog" rel="next">
+          <div class="md-footer__title">
+            <div class="md-ellipsis">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              Changelog
+            </div>
+          </div>
+          <div class="md-footer__button md-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4z"/></svg>
+          </div>
+        </a>
       
     </nav>
   
@@ -1019,10 +1091,10 @@ timeout.</p>
     <div class="md-dialog" data-md-component="dialog">
       <div class="md-dialog__inner md-typeset"></div>
     </div>
-    <script id="__config" type="application/json">{"base": "..", "features": [], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "search": "../assets/javascripts/workers/search.409db549.min.js", "version": {"provider": "mike"}}</script>
+    <script id="__config" type="application/json">{"base": "../..", "features": [], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing", "select.version.title": "Select version"}, "search": "../../assets/javascripts/workers/search.409db549.min.js", "version": {"provider": "mike"}}</script>
     
     
-      <script src="../assets/javascripts/bundle.756773cc.min.js"></script>
+      <script src="../../assets/javascripts/bundle.756773cc.min.js"></script>
       
     
   </body>

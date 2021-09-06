@@ -1,4 +1,5 @@
 import concurrent.futures
+import platform
 import shutil
 import subprocess
 from time import sleep
@@ -69,7 +70,7 @@ def test_python_m_quickhttp(html_file, tmp_path):
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
             universal_newlines=True,
-            shell=True,
+            shell=platform.system() == "Windows",
         )
         sleep(WAIT_TIME)
 
@@ -131,7 +132,7 @@ def test_python_m_version():
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
         universal_newlines=True,
-        shell=True,
+        shell=platform.system() == "Windows",
     )
     print(result.stdout)
     print(result.stderr)

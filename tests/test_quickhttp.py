@@ -65,6 +65,7 @@ def test_python_m_quickhttp(html_file, tmp_path):
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
             universal_newlines=True,
+            executable="bash",
         )
         sleep(WAIT_TIME)
 

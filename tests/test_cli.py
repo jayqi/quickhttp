@@ -1,4 +1,5 @@
 import concurrent.futures
+import os
 import platform
 import shutil
 import signal
@@ -170,12 +171,20 @@ def test_keyboard_interrupt(html_file, tmp_path):
         str(port),
     ]
 
+    if platform.system() == "Windows":
+        popen_kwargs = {
+            "shell": True,
+            "creationflags": subprocess.CREATE_NEW_PROCESS_GROUP,
+        }
+    else:
+        popen_kwargs = {}
+
     process = subprocess.Popen(
         command,
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
         universal_newlines=True,
-        shell=platform.system() == "Windows",
+        **popen_kwargs,
     )
     # Server is up
     sleep(WAIT_TIME)
@@ -184,8 +193,10 @@ def test_keyboard_interrupt(html_file, tmp_path):
 
     # Shut down server
     sleep(WAIT_TIME)
-    keyboard_interrupt = signal.SIGINT
-    process.send_signal(keyboard_interrupt)
+    if platform.system() == "Windows":
+        os.kill(process.pid, signal.CTRL_BREAK_EVENT)
+    else:
+        process.send_signal(signal.SIGINT)
 
     # Server is down
     stdout, stderr = process.communicate()

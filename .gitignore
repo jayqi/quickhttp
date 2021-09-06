@@ -1,5 +1,6 @@
 .vscode
 docs/index.md
+docs/changelog.md
 
 ## GITHUB PYTHON .GITIGNORE ##
 # https://github.com/github/gitignore/blob/master/Python.gitignore

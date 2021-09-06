@@ -4,23 +4,46 @@ repo_url: https://github.com/jayqi/quickhttp/
 
 nav:
   - Home: "index.md"
-  - API Reference: "api-reference.md"
+  - API Reference:
+      - quickhttp.exceptions: "api-reference/exceptions.md"
+      - quickhttp.http_server: "api-reference/http_server.md"
+  - Changelog: "changelog.md"
 
 theme:
   name: material
+extra_css:
+  - css/custom_mkdocstrings.css
+
+markdown_extensions:
+  - pymdownx.highlight:
+  - pymdownx.superfences:
+  - toc:
+      permalink: true
+      toc_depth: 3
+  - mdx_truly_sane_lists:
 
 plugins:
   - search
   - mkdocstrings:
+      default_handler: python
       handlers:
         python:
-          rendering:
-            show_root_toc_entry: false
-            heading_level: 2
           selection:
-            docstring_options:
-              replace_admonitions: no
-extra_css:
-  - css/version-select.css
-extra_javascript:
-  - js/version-select.js
+            filters: ["!^_(?!_init__)"]
+            inherited_members: false
+          rendering:
+            show_root_heading: false
+            show_root_toc_entry: false
+            show_root_full_path: false
+            show_if_no_docstring: false
+            show_signature_annotations: true
+            show_source: true
+            heading_level: 2
+            group_by_category: true
+            show_category_heading: true
+      watch:
+        - quickhttp
+
+extra:
+  version:
+    provider: mike

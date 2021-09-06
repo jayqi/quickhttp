@@ -34,7 +34,7 @@ def is_port_available(port: int) -> bool:
 
 
 class SearchType(str, Enum):
-    """Available types of search for
+    """Enum. Available types of search for
     [find_available_port][quickhttp.http_server.find_available_port].
 
     Attributes:

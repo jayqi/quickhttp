@@ -37,7 +37,7 @@ lint:
 
 .PHONY=typecheck
 typecheck:
-	mypy quickhttp tests
+	mypy --install-types --non-interactive quickhttp tests
 
 .PHONY=test
 test:

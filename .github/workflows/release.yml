@@ -28,7 +28,7 @@ jobs:
         id: version
         run: |
           echo "Release tag: [${{ github.event.release.tag_name }}]"
-          PACKAGE_VERSION=$(poetry run quickhttp --version")
+          PACKAGE_VERSION=$(poetry run quickhttp --version)
           echo "Package version: [$PACKAGE_VERSION]"
           [ ${{ github.event.release.tag_name }} == "v$PACKAGE_VERSION" ] || { exit 1; }
           echo "::set-output name=major_minor_version::v${PACKAGE_VERSION%.*}"

@@ -5,8 +5,8 @@ from typing import Optional
 from pytimeparse import parse
 import typer
 
-from quickhttp.core import (
-    __version__,
+from quickhttp._version import __version__
+from quickhttp.http_server import (
     DEFAULT_PORT_RANGE_MIN,
     DEFAULT_PORT_RANGE_MAX,
     DEFAULT_PORT_MAX_TRIES,
@@ -79,8 +79,7 @@ def quickhttp(
         show_default=False,
     ),
 ):
-    """Lightweight CLI that wraps Python's `http.server` with automatic port-finding and shutdown.
-    """
+    """Lightweight CLI that wraps Python's `http.server` with automatic port-finding and shutdown."""
     timeout_sec = parse(timeout)
     if not port:
         port = find_available_port(

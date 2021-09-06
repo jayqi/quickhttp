@@ -12,13 +12,7 @@ from typing import Callable, Iterable, Tuple, Union
 
 import typer
 
-if sys.version_info[:2] >= (3, 8):
-    import importlib.metadata as importlib_metadata
-else:
-    import importlib_metadata
-
-
-__version__ = importlib_metadata.version(__name__.split(".", 1)[0])
+import quickhttp.exceptions as exceptions
 
 
 def is_port_available(port: int) -> bool:
@@ -40,25 +34,22 @@ def is_port_available(port: int) -> bool:
 
 
 class SearchType(str, Enum):
-    """Available types of search for [find_available_port][quickhttp.core.find_available_port]
+    """Enum. Available types of search for
+    [find_available_port][quickhttp.http_server.find_available_port].
 
     Attributes:
-        sequential: Search ports sequentially, starting with range_min.
-        random: Search ports randomly within [range_min, range_max].
+        sequential: Search ports sequentially in ascending order, starting with range_min.
+        random: Search ports randomly within the interval [range_min, range_max].
     """
 
     sequential = "sequential"
     random = "random"
 
 
-class NoAvailablePortFound(Exception):
-    pass
-
-
-DEFAULT_PORT_RANGE_MIN = 8000
-DEFAULT_PORT_RANGE_MAX = 8999
-DEFAULT_PORT_MAX_TRIES = 50
-DEFAULT_PORT_SEARCH_TYPE = SearchType.sequential
+DEFAULT_PORT_RANGE_MIN: int = 8000
+DEFAULT_PORT_RANGE_MAX: int = 8999
+DEFAULT_PORT_MAX_TRIES: int = 50
+DEFAULT_PORT_SEARCH_TYPE: SearchType = SearchType.sequential
 
 
 def find_available_port(
@@ -79,13 +70,13 @@ def find_available_port(
             f"Invalid search_type {search_type}. Available options are "
             f"[{'|'.join(level.value for level in SearchType)}]."
         )
-        raise ValueError(msg)
+        raise exceptions.InvalidSearchTypeError(msg)
 
     for port in to_try:
         if is_port_available(port=port):
             return port
 
-    raise NoAvailablePortFound(
+    raise exceptions.NoAvailablePortFoundError(
         f"Unable to find available port in range [{range_min}, {range_max}] with "
         f"{SearchType(search_type).value} search in {max_tries} tries."
     )
@@ -106,16 +97,17 @@ Args:
         {DEFAULT_PORT_SEARCH_TYPE}.
 
 Raises:
-    ValueError: If search_type is invalid.
-    NoAvailablePortFound: If no available ports found within max_tries.
+    quickhttp.exceptions.InvalidSearchTypeError: If search_type is invalid.
+    quickhttp.exceptions.NoAvailablePortFoundError: If no available ports found within max_tries.
 
 Returns:
-    int: An available port
+    int: An available port.
 """
 
 
 class TimedHTTPServer(HTTPServer):
-    """Subclass of http.server.HTTPServer that tracks timeout status.
+    """Subclass of [http.server.HTTPServer](https://docs.python.org/3/library/http.server.html)
+    that tracks timeout status.
     """
 
     def __init__(
@@ -129,12 +121,14 @@ class TimedHTTPServer(HTTPServer):
         super().__init__(server_address=server_address, RequestHandlerClass=RequestHandlerClass)
 
     def handle_timeout(self):
+        """Called if no new request arrives within self.timeout."""
         self.timeout_reached = True
 
 
 class DirectoryHTTPRequestHandler(SimpleHTTPRequestHandler):
-    """Subclass of http.server.SimpleHTTPRequestHandler that accepts a directory. Necessary
-    because Python 3.6 doesn't support the directory argument added in Python 3.7.
+    """Subclass of [http.server.SimpleHTTPRequestHandler](https://docs.python.org/3/library/http.server.html#http.server.SimpleHTTPRequestHandler)
+    that accepts a directory. Necessary because Python 3.6 doesn't support the directory argument
+    added in Python 3.7.
     """
 
     def __init__(self, *args, directory: str, **kwargs):
@@ -150,8 +144,7 @@ class DirectoryHTTPRequestHandler(SimpleHTTPRequestHandler):
 def run_timed_http_server(
     address: str, port: int, directory: Union[str, os.PathLike], timeout: int
 ):
-    """Start a [HTTPServer](https://docs.python.org/3/library/http.server.html) with specified
-    timeout.
+    """Start a [TimedHTTPServer][quickhttp.http_server.TimedHTTPServer] with specified timeout.
 
     Args:
         address (str): Address to bind the server to.

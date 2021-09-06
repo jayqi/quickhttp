@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "quickhttp"
-version = "0.2.0"
+version = "1.0.0"
 description = "Lightweight CLI that wraps Python's http.server with automatic port-finding and shutdown."
 license = "MIT"
 authors = ["Jay Qi <jayqi.opensource@gmail.com>"]
@@ -16,28 +16,29 @@ classifiers = [
 ]
 
 [tool.poetry.scripts]
-quickhttp = "quickhttp.quickhttp:app"
+quickhttp = "quickhttp.cli:app"
 
 [tool.poetry.dependencies]
 python = "^3.6"
-importlib-metadata = {version = "^1.0", python = "<3.8"}
+importlib-metadata = {version = ">=1.0", python = "<3.8"}
 pytimeparse = "^1.1.8"
 typer = ">=0.3.0"
 
 
 [tool.poetry.dev-dependencies]
 pytest = "^5.2"
-black = "^19.10b0"
+black = ">=19.10b0"
 flake8 = "^3.8.3"
 pytest-cov = "^2.10.0"
-mkdocs = "^1.1.2"
-mkdocs-material = "^5.4.0"
-mkdocstrings = "^0.12.1"
+mkdocs = "^1.2.2"
+mkdocs-material = "^7.2.6"
+mkdocstrings = ">=0.15.2"
 requests = "^2.24.0"
-packaging = "^20.4"
-mike = "^0.5.3"
+packaging = ">=20.4"
+mike = ">=1.1.0"
 coverage = "^5.2"
-mypy = "^0.782"
+mypy = ">=0.782"
+mdx-truly-sane-lists = "1.2"
 
 [tool.black]
 line-length = 99

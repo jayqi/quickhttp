@@ -1,5 +1,8 @@
 .vscode
 docs/index.md
+docs/changelog.md
+
+poetry.lock
 
 ## GITHUB PYTHON .GITIGNORE ##
 # https://github.com/github/gitignore/blob/master/Python.gitignore

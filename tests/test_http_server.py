@@ -2,11 +2,9 @@ import shutil
 from threading import Thread
 from time import sleep
 
-from packaging.version import parse as parse_version, Version
 import pytest
 import requests
 
-from quickhttp._version import __version__
 import quickhttp.exceptions as exceptions
 from quickhttp.http_server import (
     DEFAULT_PORT_RANGE_MIN,
@@ -41,10 +39,6 @@ def timed_http_server(tmp_path, html_file):
     thread.join()
 
 
-def test_version():
-    assert isinstance(parse_version(__version__), Version)
-
-
 def test_is_port_available(timed_http_server):
     _, port = timed_http_server
     assert not is_port_available(port)
@@ -72,13 +66,17 @@ def test_find_available_port_none_found(timed_http_server):
 
 
 def test_run_timed_http_server(timed_http_server):
+    # Server is working
     directory, port = timed_http_server
     assert not is_port_available(port)
     response = requests.get(f"http://127.0.0.1:{port}")
     assert response.status_code == 200
     with (directory / "index.html").open("r") as fp:
         assert response.text == fp.read()
+
     sleep(WAIT_TIME + KEEP_ALIVE_TIME)
+
+    # Server is closed
     assert is_port_available(port)
     with pytest.raises(requests.exceptions.ConnectionError):
         requests.get(f"http://127.0.0.1:{port}")

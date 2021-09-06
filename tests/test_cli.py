@@ -18,6 +18,36 @@ KEEP_ALIVE_TIME = 4  # Duration to keep server alive for
 WAIT_TIME = 2  # Duration to wait before running test, to give server time to start up
 
 
+def test_help():
+    """Test the CLI with --help flag."""
+    result = CliRunner().invoke(app, ["--help"])
+    assert result.exit_code == 0
+    assert "Lightweight CLI that wraps Python's `http.server`" in result.output
+
+
+def test_version():
+    """Test the CLI with --version flag."""
+    result = CliRunner().invoke(app, ["--version"])
+    assert result.exit_code == 0
+    assert result.output.strip() == __version__
+
+
+def test_python_m_version():
+    """Test the CLI with --version flag."""
+    result = subprocess.run(
+        ["python", "-m", "quickhttp", "--version"],
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        universal_newlines=True,
+        shell=platform.system() == "Windows",
+    )
+    print(result.stdout)
+    print("---")
+    print(result.stderr)
+    assert result.returncode == 0
+    assert result.stdout.strip() == __version__
+
+
 def test_quickhttp(html_file, tmp_path):
     shutil.copy(html_file, tmp_path)
     port = find_available_port()
@@ -133,7 +163,7 @@ def test_keyboard_interrupt(html_file, tmp_path):
         "quickhttp",
         str(tmp_path),
         "--timeout",
-        f"{KEEP_ALIVE_TIME * 4}s",
+        f"{2*WAIT_TIME + KEEP_ALIVE_TIME}s",
         "--port-range-min",
         str(port),
         "--port-range-max",
@@ -147,51 +177,23 @@ def test_keyboard_interrupt(html_file, tmp_path):
         universal_newlines=True,
         shell=platform.system() == "Windows",
     )
-
     # Server is up
-
     sleep(WAIT_TIME)
     response = requests.get(f"http://127.0.0.1:{port}")
     assert response.status_code == 200
 
     # Shut down server
     sleep(WAIT_TIME)
-    keyboard_interrupt = signal.CTRL_C_EVENT if platform.system() == "Windows" else signal.SIGINT
+    keyboard_interrupt = signal.SIGINT
     process.send_signal(keyboard_interrupt)
 
     # Server is down
     stdout, stderr = process.communicate()
+    print(stdout)
+    print("---")
+    print(stderr)
     assert process.returncode == 0
     assert "KeyboardInterrupt received." in stdout
     assert "Server closed." in stdout
     with pytest.raises(requests.exceptions.ConnectionError):
         requests.get(f"http://127.0.0.1:{port}")
-
-
-def test_help():
-    """Test the CLI with --help flag."""
-    result = CliRunner().invoke(app, ["--help"])
-    assert result.exit_code == 0
-    assert "Lightweight CLI that wraps Python's `http.server`" in result.output
-
-
-def test_version():
-    """Test the CLI with --version flag."""
-    result = CliRunner().invoke(app, ["--version"])
-    assert result.exit_code == 0
-    assert result.output.strip() == __version__
-
-
-def test_python_m_version():
-    """Test the CLI with --version flag."""
-    result = subprocess.run(
-        ["python", "-m", "quickhttp", "--version"],
-        stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE,
-        universal_newlines=True,
-        shell=platform.system() == "Windows",
-    )
-    print(result.stdout)
-    print(result.stderr)
-    assert result.returncode == 0
-    assert result.stdout.strip() == __version__

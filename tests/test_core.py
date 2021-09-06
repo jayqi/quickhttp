@@ -6,15 +6,15 @@ from packaging.version import parse as parse_version, Version
 import pytest
 import requests
 
-from quickhttp.core import (
-    __version__,
+from quickhttp._version import __version__
+import quickhttp.exceptions as exceptions
+from quickhttp.http_server import (
     DEFAULT_PORT_RANGE_MIN,
     DEFAULT_PORT_RANGE_MAX,
     is_port_available,
     find_available_port,
     SearchType,
     run_timed_http_server,
-    NoAvailablePortFound,
 )
 
 KEEP_ALIVE_TIME = 3  # Duration to keep server alive for
@@ -61,13 +61,13 @@ def test_find_available_port(search_type):
 
 
 def test_find_available_port_invalid_search_type():
-    with pytest.raises(ValueError, match="Invalid search_type"):
+    with pytest.raises(exceptions.InvalidSearchTypeError, match="Invalid search_type"):
         find_available_port(search_type="invalid_type")
 
 
 def test_find_available_port_none_found(timed_http_server):
     directory, port = timed_http_server
-    with pytest.raises(NoAvailablePortFound):
+    with pytest.raises(exceptions.NoAvailablePortFoundError):
         find_available_port(range_min=port, range_max=port)
 
 

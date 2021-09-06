@@ -12,14 +12,6 @@ from typing import Callable, Iterable, Tuple, Union
 
 import typer
 
-if sys.version_info[:2] >= (3, 8):
-    import importlib.metadata as importlib_metadata
-else:
-    import importlib_metadata
-
-
-__version__ = importlib_metadata.version(__name__.split(".", 1)[0])
-
 
 def is_port_available(port: int) -> bool:
     """Check if port is available (not in use) on the local host. This is determined by

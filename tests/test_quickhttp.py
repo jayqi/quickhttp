@@ -54,7 +54,7 @@ def test_python_m_quickhttp(html_file, tmp_path):
                 "python",
                 "-m",
                 "quickhttp",
-                str(tmp_path),
+                f'"{tmp_path}"',
                 "--timeout",
                 f"{KEEP_ALIVE_TIME}s",
                 "--port-range-min",
@@ -65,7 +65,6 @@ def test_python_m_quickhttp(html_file, tmp_path):
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
             universal_newlines=True,
-            executable="bash",
         )
         sleep(WAIT_TIME)
 
@@ -113,3 +112,15 @@ def test_version():
     result = CliRunner().invoke(app, ["--version"])
     assert result.exit_code == 0
     assert result.output.strip() == __version__
+
+
+def test_python_m_version():
+    """Test the CLI with --version flag."""
+    result = subprocess.run(
+        ["python", "-m", "quickhttp", "--version"],
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        universal_newlines=True,
+    )
+    assert result.returncode == 0
+    assert result.stdout.strip() == __version__

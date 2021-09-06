@@ -154,7 +154,8 @@ def test_keyboard_interrupt(html_file, tmp_path):
 
     # Shut down server
     sleep(WAIT_TIME)
-    process.send_signal(signal.SIGINT)
+    keyboard_interrupt = signal.CTRL_C_EVENT if platform.system() == "Windows" else signal.SIGINT
+    process.send_signal(keyboard_interrupt)
 
     # Server is down
     stdout, stderr = process.communicate()

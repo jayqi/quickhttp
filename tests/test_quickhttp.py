@@ -48,25 +48,30 @@ def test_python_m_quickhttp(html_file, tmp_path):
     port = find_available_port()
 
     with concurrent.futures.ThreadPoolExecutor() as executor:
+        command = [
+            "python",
+            "-m",
+            "quickhttp",
+            str(tmp_path),
+            "--timeout",
+            f"{KEEP_ALIVE_TIME}s",
+            "--port-range-min",
+            str(port),
+            "--port-range-max",
+            str(port),
+        ]
+        print(command)
         future = executor.submit(
             subprocess.run,
-            [
-                "python",
-                "-m",
-                "quickhttp",
-                f'"{tmp_path}"',
-                "--timeout",
-                f"{KEEP_ALIVE_TIME}s",
-                "--port-range-min",
-                str(port),
-                "--port-range-max",
-                str(port),
-            ],
+            command,
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
             universal_newlines=True,
         )
         sleep(WAIT_TIME)
+        result = future.result()
+        print(result.stdout)
+        print(result.stderr)
 
         response = requests.get(f"http://127.0.0.1:{port}")
         with html_file.open("r") as fp:
@@ -124,3 +129,4 @@ def test_python_m_version():
     )
     assert result.returncode == 0
     assert result.stdout.strip() == __version__
+    print(result.stderr)

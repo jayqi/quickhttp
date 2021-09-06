@@ -80,3 +80,5 @@ def test_run_timed_http_server(timed_http_server):
         assert response.text == fp.read()
     sleep(WAIT_TIME + KEEP_ALIVE_TIME)
     assert is_port_available(port)
+    with pytest.raises(requests.exceptions.ConnectionError):
+        requests.get(f"http://127.0.0.1:{port}")

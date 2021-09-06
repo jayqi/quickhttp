@@ -1,9 +1,11 @@
 import concurrent.futures
 import platform
 import shutil
+import signal
 import subprocess
 from time import sleep
 
+import pytest
 import requests
 from typer.testing import CliRunner
 
@@ -42,7 +44,10 @@ def test_quickhttp(html_file, tmp_path):
             assert result.exit_code == 0
             assert result.stdout.strip().endswith("Server closed.")
             assert is_port_available(port)
+            with pytest.raises(requests.exceptions.ConnectionError):
+                requests.get(f"http://127.0.0.1:{port}")
             # Check that response is as expected
+            assert response.status_code == 200
             assert response.text == fp.read()
 
 
@@ -83,7 +88,10 @@ def test_python_m_quickhttp(html_file, tmp_path):
             assert result.returncode == 0
             assert result.stdout.strip().endswith("Server closed.")
             assert is_port_available(port)
+            with pytest.raises(requests.exceptions.ConnectionError):
+                requests.get(f"http://127.0.0.1:{port}")
             # Check that response is as expected
+            assert response.status_code == 200
             assert response.text == fp.read()
 
 
@@ -107,8 +115,54 @@ def test_quickhttp_with_port(html_file, tmp_path):
             assert result.exit_code == 0
             assert result.stdout.strip().endswith("Server closed.")
             assert is_port_available(port)
+            with pytest.raises(requests.exceptions.ConnectionError):
+                requests.get(f"http://127.0.0.1:{port}")
             # Check that response is as expected
+            assert response.status_code == 200
             assert response.text == fp.read()
+
+
+def test_keyboard_interrupt(html_file, tmp_path):
+    shutil.copy(html_file, tmp_path)
+    port = find_available_port()
+    command = [
+        "python",
+        "-m",
+        "quickhttp",
+        str(tmp_path),
+        "--timeout",
+        f"{KEEP_ALIVE_TIME * 4}s",
+        "--port-range-min",
+        str(port),
+        "--port-range-max",
+        str(port),
+    ]
+
+    process = subprocess.Popen(
+        command,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        universal_newlines=True,
+        shell=platform.system() == "Windows",
+    )
+
+    # Server is up
+
+    sleep(WAIT_TIME)
+    response = requests.get(f"http://127.0.0.1:{port}")
+    assert response.status_code == 200
+
+    # Shut down server
+    sleep(WAIT_TIME)
+    process.send_signal(signal.SIGINT)
+
+    # Server is down
+    stdout, stderr = process.communicate()
+    assert process.returncode == 0
+    assert "KeyboardInterrupt received." in stdout
+    assert "Server closed." in stdout
+    with pytest.raises(requests.exceptions.ConnectionError):
+        requests.get(f"http://127.0.0.1:{port}")
 
 
 def test_help():

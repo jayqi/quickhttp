@@ -211,5 +211,6 @@ def test_keyboard_interrupt(html_file, tmp_path):
         assert process.returncode == 0
         assert "KeyboardInterrupt received." in stdout
         assert "Server closed." in stdout
+    assert is_port_available(port)
     with pytest.raises(requests.exceptions.ConnectionError):
         requests.get(f"http://127.0.0.1:{port}")

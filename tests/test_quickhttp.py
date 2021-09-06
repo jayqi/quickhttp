@@ -1,4 +1,5 @@
 import concurrent.futures
+import os
 import shutil
 import subprocess
 from time import sleep
@@ -35,12 +36,15 @@ def test_quickhttp(html_file, tmp_path):
 
         response = requests.get(f"http://127.0.0.1:{port}")
         with html_file.open("r") as fp:
+            # Check that server closed first so we can print results as needed for debugging
+            result = future.result()
+            print(result.stdout)
+            print(result.stderr)
+            assert result.exit_code == 0
+            assert result.stdout.strip().endswith("Server closed.")
+            assert is_port_available(port)
+            # Check that response is as expected
             assert response.text == fp.read()
-
-        result = future.result()
-        assert result.exit_code == 0
-        assert result.stdout.strip().endswith("Server closed.")
-        assert is_port_available(port)
 
 
 def test_python_m_quickhttp(html_file, tmp_path):
@@ -67,20 +71,21 @@ def test_python_m_quickhttp(html_file, tmp_path):
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
             universal_newlines=True,
+            env=os.environ,
         )
         sleep(WAIT_TIME)
-        result = future.result()
-        print(result.stdout)
-        print(result.stderr)
 
         response = requests.get(f"http://127.0.0.1:{port}")
         with html_file.open("r") as fp:
+            # Check that server closed first so we can print results as needed for debugging
+            result = future.result()
+            print(result.stdout)
+            print(result.stderr)
+            assert result.returncode == 0
+            assert result.stdout.strip().endswith("Server closed.")
+            assert is_port_available(port)
+            # Check that response is as expected
             assert response.text == fp.read()
-
-        result = future.result()
-        assert result.returncode == 0
-        assert result.stdout.strip().endswith("Server closed.")
-        assert is_port_available(port)
 
 
 def test_quickhttp_with_port(html_file, tmp_path):
@@ -97,12 +102,15 @@ def test_quickhttp_with_port(html_file, tmp_path):
 
         response = requests.get(f"http://127.0.0.1:{port}")
         with html_file.open("r") as fp:
+            # Check that server closed first so we can print results as needed for debugging
+            result = future.result()
+            print(result.stdout)
+            print(result.stderr)
+            assert result.exit_code == 0
+            assert result.stdout.strip().endswith("Server closed.")
+            assert is_port_available(port)
+            # Check that response is as expected
             assert response.text == fp.read()
-
-        result = future.result()
-        assert result.exit_code == 0
-        assert result.stdout.strip().endswith("Server closed.")
-        assert is_port_available(port)
 
 
 def test_help():
@@ -126,7 +134,9 @@ def test_python_m_version():
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
         universal_newlines=True,
+        env=os.environ,
     )
+    print(result.stdout)
+    print(result.stderr)
     assert result.returncode == 0
     assert result.stdout.strip() == __version__
-    print(result.stderr)

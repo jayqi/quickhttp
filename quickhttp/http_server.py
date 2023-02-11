@@ -45,9 +45,13 @@ class SearchType(str, Enum):
 
 
 DEFAULT_PORT_RANGE_MIN: int = 8000
+"""Default minimum of open port search range."""
 DEFAULT_PORT_RANGE_MAX: int = 8999
+"""Default maximum of open port search range."""
 DEFAULT_PORT_MAX_TRIES: int = 50
+"""Default maximum number of search attempts for an open port."""
 DEFAULT_PORT_SEARCH_TYPE: SearchType = SearchType.sequential
+"""Default type of search for [find_available_port][quickhttp.http_server.find_available_port]."""
 
 
 def find_available_port(
@@ -56,6 +60,26 @@ def find_available_port(
     max_tries: int = DEFAULT_PORT_MAX_TRIES,
     search_type: SearchType = DEFAULT_PORT_SEARCH_TYPE,
 ) -> int:
+    """Searches for an available port (not in use) on the local host.
+
+    Args:
+        range_min (int, optional): Minimum of range to search. Defaults to
+            [DEFAULT_PORT_RANGE_MIN][quickhttp.http_server.DEFAULT_PORT_RANGE_MIN].
+        range_max (int, optional): Maximum of range to search. Defaults to
+            [DEFAULT_PORT_RANGE_MAX][quickhttp.http_server.DEFAULT_PORT_RANGE_MAX].
+        max_tries (int, optional): Maximum number of ports to check. Defaults to
+            [DEFAULT_PORT_MAX_TRIES][quickhttp.http_server.DEFAULT_PORT_MAX_TRIES].
+        search_type (SearchType, optional): Type of search. See
+            [SearchType][quickhttp.http_server.SearchType] enum for valid values. Defaults to
+            [DEFAULT_PORT_SEARCH_TYPE][quickhttp.http_server.DEFAULT_PORT_SEARCH_TYPE].
+
+    Raises:
+        quickhttp.exceptions.InvalidSearchTypeError: If search_type is invalid.
+        quickhttp.exceptions.NoAvailablePortFoundError: If no available ports found within max_tries.
+
+    Returns:
+        int: An available port.
+    """
     max_tries = min(max_tries, range_max - range_min + 1)
 
     to_try: Iterable[int]
@@ -80,27 +104,13 @@ def find_available_port(
     )
 
 
-find_available_port.__doc__ = f"""\
-Searches for an available port (not in use) on the local host.
-
-Args:
-    range_min (int, optional): Minimum of range to search. Defaults to
-        {DEFAULT_PORT_RANGE_MIN}.
-    range_max (int, optional): Maximum of range to search. Defaults to
-        {DEFAULT_PORT_RANGE_MAX}.
-    max_tries (int, optional): Maximum number of ports to check. Defaults to
-        {DEFAULT_PORT_MAX_TRIES}.
-    search_type (SearchType, optional): Type of search. One of
-        [{'|'.join(level.value for level in SearchType)}]. Defaults to
-        {DEFAULT_PORT_SEARCH_TYPE}.
-
-Raises:
-    quickhttp.exceptions.InvalidSearchTypeError: If search_type is invalid.
-    quickhttp.exceptions.NoAvailablePortFoundError: If no available ports found within max_tries.
-
-Returns:
-    int: An available port.
-"""
+find_available_port.__doc__ = find_available_port.__doc__.format(
+    DEFAULT_PORT_RANGE_MIN=DEFAULT_PORT_RANGE_MIN,
+    DEFAULT_PORT_RANGE_MAX=DEFAULT_PORT_RANGE_MAX,
+    DEFAULT_PORT_MAX_TRIES=DEFAULT_PORT_MAX_TRIES,
+    DEFAULT_PORT_SEARCH_TYPE=DEFAULT_PORT_SEARCH_TYPE,
+    SEARCH_TYPES="|".join(level.value for level in SearchType),
+)
 
 
 class TimedHTTPServer(HTTPServer):

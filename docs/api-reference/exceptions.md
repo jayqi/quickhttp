@@ -3,5 +3,5 @@
 Documentation for `quickhttp.exceptions` module.
 
 ::: quickhttp.exceptions
-    rendering:
+    options:
         show_if_no_docstring: true

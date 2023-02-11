@@ -7,11 +7,11 @@ import requests
 
 import quickhttp.exceptions as exceptions
 from quickhttp.http_server import (
-    DEFAULT_PORT_RANGE_MIN,
     DEFAULT_PORT_RANGE_MAX,
-    is_port_available,
-    find_available_port,
+    DEFAULT_PORT_RANGE_MIN,
     SearchType,
+    find_available_port,
+    is_port_available,
     run_timed_http_server,
 )
 

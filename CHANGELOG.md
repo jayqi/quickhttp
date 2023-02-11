@@ -1,5 +1,10 @@
 # Release Notes
 
+## v2.0.0 - 2023-02-11
+
+- Removed support for Python 3.6.
+- Removed `DirectoryHTTPRequestHandler` which was only needed for Python 3.6.
+
 ## v1.0.0 - 2021-09-06
 
 - Changed module organization of package code to be more clear and explicit:

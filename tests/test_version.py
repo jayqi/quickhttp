@@ -1,4 +1,5 @@
-from packaging.version import parse as parse_version, Version
+from packaging.version import Version
+from packaging.version import parse as parse_version
 
 from quickhttp._version import __version__
 

@@ -28,7 +28,7 @@ You can also install normally using regular `pip`:
 pip install quickhttp
 ```
 
-Requires Python 3.6 or higher.
+Requires Python 3.7 or higher. For Python 3.6, install [v1.0.0](https://pypi.org/project/quickhttp/1.0.0/).
 
 ### Development Version
 

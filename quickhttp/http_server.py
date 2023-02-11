@@ -1,13 +1,11 @@
 from contextlib import closing
 from enum import Enum
-from itertools import islice
 from functools import partial
 from http.server import BaseHTTPRequestHandler, HTTPServer, SimpleHTTPRequestHandler
+from itertools import islice
 import os
-from pathlib import Path
 import random
 import socket
-import sys
 from typing import Callable, Iterable, Tuple, Union
 
 import typer
@@ -16,9 +14,9 @@ import quickhttp.exceptions as exceptions
 
 
 def is_port_available(port: int) -> bool:
-    """Check if port is available (not in use) on the local host. This is determined by
-    attemping to create a socket connection with that port. If the connection is successful, that
-    means something is using the port.
+    """Check if port is available (not in use) on the local host. This is determined by attemping
+    to create a socket connection with that port. If the connection is successful, that means
+    something is using the port.
 
     Args:
         port (int): port to check.
@@ -125,22 +123,6 @@ class TimedHTTPServer(HTTPServer):
         self.timeout_reached = True
 
 
-class DirectoryHTTPRequestHandler(SimpleHTTPRequestHandler):
-    """Subclass of [http.server.SimpleHTTPRequestHandler](https://docs.python.org/3/library/http.server.html#http.server.SimpleHTTPRequestHandler)
-    that accepts a directory. Necessary because Python 3.6 doesn't support the directory argument
-    added in Python 3.7.
-    """
-
-    def __init__(self, *args, directory: str, **kwargs):
-        self.directory = Path(directory)
-        super().__init__(*args, **kwargs)
-
-    def translate_path(self, path):
-        path = super().translate_path(path)
-        rel_path = Path(path).relative_to(Path.cwd())
-        return self.directory / rel_path
-
-
 def run_timed_http_server(
     address: str, port: int, directory: Union[str, os.PathLike], timeout: int
 ):
@@ -152,10 +134,7 @@ def run_timed_http_server(
         directory (Union[str, os.PathLike]): Directory to serve.
         timeout (int): Time to keep server alive for, in seconds.
     """
-    if sys.version_info[:2] == (3, 6):
-        handler = partial(DirectoryHTTPRequestHandler, directory=str(directory))
-    else:
-        handler = partial(SimpleHTTPRequestHandler, directory=str(directory))
+    handler = partial(SimpleHTTPRequestHandler, directory=str(directory))
 
     with TimedHTTPServer(
         server_address=(address, port), RequestHandlerClass=handler, timeout=timeout

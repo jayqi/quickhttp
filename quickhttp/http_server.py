@@ -1,24 +1,22 @@
 from contextlib import closing
 from enum import Enum
-from itertools import islice
 from functools import partial
 from http.server import BaseHTTPRequestHandler, HTTPServer, SimpleHTTPRequestHandler
+from itertools import islice
 import os
-from pathlib import Path
 import random
 import socket
-import sys
 from typing import Callable, Iterable, Tuple, Union
 
 import typer
 
-import quickhttp.exceptions as exceptions
+from quickhttp.exceptions import InvalidSearchTypeError, NoAvailablePortFoundError
 
 
 def is_port_available(port: int) -> bool:
-    """Check if port is available (not in use) on the local host. This is determined by
-    attemping to create a socket connection with that port. If the connection is successful, that
-    means something is using the port.
+    """Check if port is available (not in use) on the local host. This is determined by attemping
+    to create a socket connection with that port. If the connection is successful, that means
+    something is using the port.
 
     Args:
         port (int): port to check.
@@ -35,7 +33,7 @@ def is_port_available(port: int) -> bool:
 
 class SearchType(str, Enum):
     """Enum. Available types of search for
-    [find_available_port][quickhttp.http_server.find_available_port].
+    [`find_available_port`][quickhttp.http_server.find_available_port].
 
     Attributes:
         sequential: Search ports sequentially in ascending order, starting with range_min.
@@ -47,9 +45,15 @@ class SearchType(str, Enum):
 
 
 DEFAULT_PORT_RANGE_MIN: int = 8000
+"""Default minimum of open port search range."""
 DEFAULT_PORT_RANGE_MAX: int = 8999
+"""Default maximum of open port search range."""
 DEFAULT_PORT_MAX_TRIES: int = 50
+"""Default maximum number of search attempts for an open port."""
 DEFAULT_PORT_SEARCH_TYPE: SearchType = SearchType.sequential
+"""Default type of search for [`find_available_port`][quickhttp.http_server.find_available_port].
+See [`SearchType`][quickhttp.http_server.SearchType].
+"""
 
 
 def find_available_port(
@@ -58,6 +62,26 @@ def find_available_port(
     max_tries: int = DEFAULT_PORT_MAX_TRIES,
     search_type: SearchType = DEFAULT_PORT_SEARCH_TYPE,
 ) -> int:
+    """Searches for an available port (not in use) on the local host.
+
+    Args:
+        range_min (int, optional): Minimum of range to search. Defaults to
+            [DEFAULT_PORT_RANGE_MIN][quickhttp.http_server.DEFAULT_PORT_RANGE_MIN].
+        range_max (int, optional): Maximum of range to search. Defaults to
+            [DEFAULT_PORT_RANGE_MAX][quickhttp.http_server.DEFAULT_PORT_RANGE_MAX].
+        max_tries (int, optional): Maximum number of ports to check. Defaults to
+            [DEFAULT_PORT_MAX_TRIES][quickhttp.http_server.DEFAULT_PORT_MAX_TRIES].
+        search_type (SearchType, optional): Type of search. See
+            [SearchType][quickhttp.http_server.SearchType] enum for valid values. Defaults to
+            [DEFAULT_PORT_SEARCH_TYPE][quickhttp.http_server.DEFAULT_PORT_SEARCH_TYPE].
+
+    Raises:
+        InvalidSearchTypeError: If search_type is invalid.
+        NoAvailablePortFoundError: If no available ports found within max_tries.
+
+    Returns:
+        int: An available port.
+    """
     max_tries = min(max_tries, range_max - range_min + 1)
 
     to_try: Iterable[int]
@@ -70,43 +94,20 @@ def find_available_port(
             f"Invalid search_type {search_type}. Available options are "
             f"[{'|'.join(level.value for level in SearchType)}]."
         )
-        raise exceptions.InvalidSearchTypeError(msg)
+        raise InvalidSearchTypeError(msg)
 
     for port in to_try:
         if is_port_available(port=port):
             return port
 
-    raise exceptions.NoAvailablePortFoundError(
+    raise NoAvailablePortFoundError(
         f"Unable to find available port in range [{range_min}, {range_max}] with "
         f"{SearchType(search_type).value} search in {max_tries} tries."
     )
 
 
-find_available_port.__doc__ = f"""\
-Searches for an available port (not in use) on the local host.
-
-Args:
-    range_min (int, optional): Minimum of range to search. Defaults to
-        {DEFAULT_PORT_RANGE_MIN}.
-    range_max (int, optional): Maximum of range to search. Defaults to
-        {DEFAULT_PORT_RANGE_MAX}.
-    max_tries (int, optional): Maximum number of ports to check. Defaults to
-        {DEFAULT_PORT_MAX_TRIES}.
-    search_type (SearchType, optional): Type of search. One of
-        [{'|'.join(level.value for level in SearchType)}]. Defaults to
-        {DEFAULT_PORT_SEARCH_TYPE}.
-
-Raises:
-    quickhttp.exceptions.InvalidSearchTypeError: If search_type is invalid.
-    quickhttp.exceptions.NoAvailablePortFoundError: If no available ports found within max_tries.
-
-Returns:
-    int: An available port.
-"""
-
-
 class TimedHTTPServer(HTTPServer):
-    """Subclass of [http.server.HTTPServer](https://docs.python.org/3/library/http.server.html)
+    """Subclass of [`http.server.HTTPServer`](https://docs.python.org/3/library/http.server.html)
     that tracks timeout status.
     """
 
@@ -125,26 +126,10 @@ class TimedHTTPServer(HTTPServer):
         self.timeout_reached = True
 
 
-class DirectoryHTTPRequestHandler(SimpleHTTPRequestHandler):
-    """Subclass of [http.server.SimpleHTTPRequestHandler](https://docs.python.org/3/library/http.server.html#http.server.SimpleHTTPRequestHandler)
-    that accepts a directory. Necessary because Python 3.6 doesn't support the directory argument
-    added in Python 3.7.
-    """
-
-    def __init__(self, *args, directory: str, **kwargs):
-        self.directory = Path(directory)
-        super().__init__(*args, **kwargs)
-
-    def translate_path(self, path):
-        path = super().translate_path(path)
-        rel_path = Path(path).relative_to(Path.cwd())
-        return self.directory / rel_path
-
-
 def run_timed_http_server(
     address: str, port: int, directory: Union[str, os.PathLike], timeout: int
 ):
-    """Start a [TimedHTTPServer][quickhttp.http_server.TimedHTTPServer] with specified timeout.
+    """Start a [`TimedHTTPServer`][quickhttp.http_server.TimedHTTPServer] with specified timeout.
 
     Args:
         address (str): Address to bind the server to.
@@ -152,10 +137,7 @@ def run_timed_http_server(
         directory (Union[str, os.PathLike]): Directory to serve.
         timeout (int): Time to keep server alive for, in seconds.
     """
-    if sys.version_info[:2] == (3, 6):
-        handler = partial(DirectoryHTTPRequestHandler, directory=str(directory))
-    else:
-        handler = partial(SimpleHTTPRequestHandler, directory=str(directory))
+    handler = partial(SimpleHTTPRequestHandler, directory=str(directory))
 
     with TimedHTTPServer(
         server_address=(address, port), RequestHandlerClass=handler, timeout=timeout

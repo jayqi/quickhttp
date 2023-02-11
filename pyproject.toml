@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "quickhttp"
-version = "1.0.0"
+version = "2.0.0"
 description = "Lightweight CLI that wraps Python's http.server with automatic port-finding and shutdown."
 license = "MIT"
 authors = ["Jay Qi <jayqi.opensource@gmail.com>"]
@@ -19,30 +19,32 @@ classifiers = [
 quickhttp = "quickhttp.cli:app"
 
 [tool.poetry.dependencies]
-python = "^3.6"
+python = "^3.7"
 importlib-metadata = {version = ">=1.0", python = "<3.8"}
 pytimeparse = "^1.1.8"
 typer = ">=0.3.0"
 
-
-[tool.poetry.dev-dependencies]
-pytest = "^6.2.4"
+[tool.poetry.group.dev.dependencies]
+coverage = "^7.1"
 black = ">=19.10b0"
-flake8 = "^3.8.3"
-pytest-cov = "^2.10.0"
-mkdocs = "^1.2.2"
-mkdocs-material = "^7.2.6"
-mkdocstrings = ">=0.15.2"
-requests = "^2.24.0"
-packaging = ">=20.4"
-mike = ">=1.1.0"
-coverage = "^5.2"
-mypy = ">=0.782"
 mdx-truly-sane-lists = "1.2"
+mike = ">=1.1.0"
+mkdocs = "^1.4"
+mkdocs-material = "^9.0"
+mkdocstrings = {version = ">=0.20", extras = ["python"]}
+mypy = ">=0.782"
+packaging = ">=20.4"
+pytest = "^7.2"
+pytest-cov = "^4.0"
+requests = "^2.24"
+ruff = "^0.0.245"
+
+[build-system]
+requires = ["poetry>=0.12"]
+build-backend = "poetry.masonry.api"
 
 [tool.black]
 line-length = 99
-target-version = ['py36', 'py37', 'py38']
 include = '\.pyi?$'
 exclude = '''
 /(
@@ -50,6 +52,29 @@ exclude = '''
   | \.venv
 )/
 '''
-[build-system]
-requires = ["poetry>=0.12"]
-build-backend = "poetry.masonry.api"
+
+[tool.ruff]
+line-length = 99
+select = [
+  "E",  # Pyflakes
+  "F",  # Pycodestyle
+  "I",  # isort
+]
+src = ["quickhttp", "tests"]
+
+[tool.ruff.isort]
+known-first-party = ["quickhttp"]
+force-sort-within-sections = true
+
+[tool.mypy]
+ignore_missing_imports = true
+
+[tool.pytest.ini_options]
+minversion = "6.0"
+addopts = "--cov=quickhttp --cov-report=term --cov-report=html --cov-report=xml"
+testpaths = [
+    "tests",
+]
+
+[tool.coverage.run]
+source = ["quickhttp"]

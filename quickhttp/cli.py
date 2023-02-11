@@ -7,13 +7,13 @@ import typer
 
 from quickhttp._version import __version__
 from quickhttp.http_server import (
-    DEFAULT_PORT_RANGE_MIN,
-    DEFAULT_PORT_RANGE_MAX,
     DEFAULT_PORT_MAX_TRIES,
+    DEFAULT_PORT_RANGE_MAX,
+    DEFAULT_PORT_RANGE_MIN,
     DEFAULT_PORT_SEARCH_TYPE,
+    SearchType,
     find_available_port,
     run_timed_http_server,
-    SearchType,
 )
 
 app = typer.Typer()
@@ -36,7 +36,7 @@ def quickhttp(
         "-t",
         help=(
             "Time to keep server alive for after most recent request. Accepts time expressions "
-            "parsable by pytime parse, such as '10m' or '10:00'."
+            "parsable by pytimeparse, such as '10m' or '10:00'."
         ),
     ),
     bind: str = typer.Option(
@@ -79,7 +79,7 @@ def quickhttp(
         show_default=False,
     ),
 ):
-    """Lightweight CLI that wraps Python's `http.server` with automatic port-finding and shutdown."""
+    "Lightweight CLI that wraps Python's `http.server` with automatic port-finding and shutdown."
     timeout_sec = parse(timeout)
     if not port:
         port = find_available_port(

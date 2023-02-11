@@ -11,6 +11,23 @@ nav:
 
 theme:
   name: material
+  palette:
+    # Palette toggle for dark mode
+    - scheme: slate
+      primary: indigo
+      accent: blue
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+    # Palette toggle for light mode
+    - scheme: default
+      primary: indigo
+      accent: blue
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+  custom_dir: docs/overrides/
+
 extra_css:
   - css/custom_mkdocstrings.css
 
@@ -28,22 +45,24 @@ plugins:
       default_handler: python
       handlers:
         python:
-          selection:
-            filters: ["!^_(?!_init__)"]
-            inherited_members: false
-          rendering:
-            show_root_heading: false
+          options:
+            # Headings options
+            heading_level: 2
             show_root_toc_entry: false
             show_root_full_path: false
-            show_if_no_docstring: false
-            show_signature_annotations: true
-            show_source: true
-            heading_level: 2
-            group_by_category: true
+            show_root_heading: false
             show_category_heading: true
-      watch:
-        - quickhttp
+            # Members options
+            filters: ["!^_(?!_init__)"]
+            group_by_category: true
+            # Docstrings options
+            show_if_no_docstring: false
+            # Signatures/annotation options
+            show_signature_annotations: true
+            # Additional options
+            show_source: true
 
 extra:
   version:
     provider: mike
+    default: stable

@@ -33,7 +33,7 @@ docs: clean-docs
 .PHONY=lint
 lint:
 	black --check quickhttp tests
-	flake8 quickhttp tests
+	ruff quickhttp tests
 
 .PHONY=typecheck
 typecheck:

@@ -10,7 +10,7 @@ from typing import Callable, Iterable, Tuple, Union
 
 import typer
 
-import quickhttp.exceptions as exceptions
+from quickhttp.exceptions import InvalidSearchTypeError, NoAvailablePortFoundError
 
 
 def is_port_available(port: int) -> bool:
@@ -33,7 +33,7 @@ def is_port_available(port: int) -> bool:
 
 class SearchType(str, Enum):
     """Enum. Available types of search for
-    [find_available_port][quickhttp.http_server.find_available_port].
+    [`find_available_port`][quickhttp.http_server.find_available_port].
 
     Attributes:
         sequential: Search ports sequentially in ascending order, starting with range_min.
@@ -51,7 +51,9 @@ DEFAULT_PORT_RANGE_MAX: int = 8999
 DEFAULT_PORT_MAX_TRIES: int = 50
 """Default maximum number of search attempts for an open port."""
 DEFAULT_PORT_SEARCH_TYPE: SearchType = SearchType.sequential
-"""Default type of search for [find_available_port][quickhttp.http_server.find_available_port]."""
+"""Default type of search for [`find_available_port`][quickhttp.http_server.find_available_port].
+See [`SearchType`][quickhttp.http_server.SearchType].
+"""
 
 
 def find_available_port(
@@ -74,8 +76,8 @@ def find_available_port(
             [DEFAULT_PORT_SEARCH_TYPE][quickhttp.http_server.DEFAULT_PORT_SEARCH_TYPE].
 
     Raises:
-        quickhttp.exceptions.InvalidSearchTypeError: If search_type is invalid.
-        quickhttp.exceptions.NoAvailablePortFoundError: If no available ports found within max_tries.
+        InvalidSearchTypeError: If search_type is invalid.
+        NoAvailablePortFoundError: If no available ports found within max_tries.
 
     Returns:
         int: An available port.
@@ -92,29 +94,20 @@ def find_available_port(
             f"Invalid search_type {search_type}. Available options are "
             f"[{'|'.join(level.value for level in SearchType)}]."
         )
-        raise exceptions.InvalidSearchTypeError(msg)
+        raise InvalidSearchTypeError(msg)
 
     for port in to_try:
         if is_port_available(port=port):
             return port
 
-    raise exceptions.NoAvailablePortFoundError(
+    raise NoAvailablePortFoundError(
         f"Unable to find available port in range [{range_min}, {range_max}] with "
         f"{SearchType(search_type).value} search in {max_tries} tries."
     )
 
 
-find_available_port.__doc__ = find_available_port.__doc__.format(
-    DEFAULT_PORT_RANGE_MIN=DEFAULT_PORT_RANGE_MIN,
-    DEFAULT_PORT_RANGE_MAX=DEFAULT_PORT_RANGE_MAX,
-    DEFAULT_PORT_MAX_TRIES=DEFAULT_PORT_MAX_TRIES,
-    DEFAULT_PORT_SEARCH_TYPE=DEFAULT_PORT_SEARCH_TYPE,
-    SEARCH_TYPES="|".join(level.value for level in SearchType),
-)
-
-
 class TimedHTTPServer(HTTPServer):
-    """Subclass of [http.server.HTTPServer](https://docs.python.org/3/library/http.server.html)
+    """Subclass of [`http.server.HTTPServer`](https://docs.python.org/3/library/http.server.html)
     that tracks timeout status.
     """
 
@@ -136,7 +129,7 @@ class TimedHTTPServer(HTTPServer):
 def run_timed_http_server(
     address: str, port: int, directory: Union[str, os.PathLike], timeout: int
 ):
-    """Start a [TimedHTTPServer][quickhttp.http_server.TimedHTTPServer] with specified timeout.
+    """Start a [`TimedHTTPServer`][quickhttp.http_server.TimedHTTPServer] with specified timeout.
 
     Args:
         address (str): Address to bind the server to.

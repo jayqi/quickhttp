@@ -1,7 +1,7 @@
 .doc.doc-heading {
     padding-left: 1ch;
     padding-bottom: 5px;
-    background-color: #F8F8F8;
+    background-color: var(--md-code-bg-color);
 }
 
 div.doc-contents:not(.first) {

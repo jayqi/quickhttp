@@ -56,7 +56,7 @@ Arguments:
 Options:
   -t, --timeout TEXT              Time to keep server alive for after most
                                   recent request. Accepts time expressions
-                                  parsable by pytime parse, such as '10m' or
+                                  parsable by pytimeparse, such as '10m' or
                                   '10:00'.  [default: 10m]
 
   -b, --bind TEXT                 Address to bind server to. '127.0.0.1' (or

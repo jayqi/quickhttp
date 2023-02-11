@@ -36,7 +36,7 @@ def quickhttp(
         "-t",
         help=(
             "Time to keep server alive for after most recent request. Accepts time expressions "
-            "parsable by pytime parse, such as '10m' or '10:00'."
+            "parsable by pytimeparse, such as '10m' or '10:00'."
         ),
     ),
     bind: str = typer.Option(

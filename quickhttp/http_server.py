@@ -14,7 +14,7 @@ from quickhttp.exceptions import InvalidSearchTypeError, NoAvailablePortFoundErr
 
 
 def is_port_available(port: int) -> bool:
-    """Check if port is available (not in use) on the local host. This is determined by attemping
+    """Check if port is available (not in use) on the local host. This is determined by attempting
     to create a socket connection with that port. If the connection is successful, that means
     something is using the port.
 
@@ -26,7 +26,7 @@ def is_port_available(port: int) -> bool:
     """
     with closing(socket.socket(socket.AF_INET, socket.SOCK_STREAM)) as sock:
         if sock.connect_ex(("127.0.0.1", port)) == 0:
-            # Successfull connection
+            # Successful connection
             return False
     return True
 

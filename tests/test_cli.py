@@ -163,7 +163,7 @@ def test_keyboard_interrupt(html_file, tmp_path):
         "quickhttp",
         str(tmp_path),
         "--timeout",
-        f"{2*WAIT_TIME + KEEP_ALIVE_TIME}s",
+        f"{2 * WAIT_TIME + KEEP_ALIVE_TIME}s",
         "--port-range-min",
         str(port),
         "--port-range-max",

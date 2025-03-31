@@ -38,7 +38,6 @@ dev = [
   { include-group = "docs" },
 ]
 lint = [
-  "mypy[install-types]>=0.782",
   "ruff>=0.0.245",
 ]
 docs = [
@@ -53,6 +52,9 @@ test = [
   "coverage>=7.1",
   "pytest-cov>=4.0",
   "requests",
+]
+typecheck = [
+  "mypy[install-types]>=1.0.0",
 ]
 
 ## TOOLS

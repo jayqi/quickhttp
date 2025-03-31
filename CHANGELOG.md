@@ -1,5 +1,11 @@
 # Release Notes
 
+## v2.1.0 - 2025-03-31
+
+- Removed support for Python 3.7
+- Added support for Python 3.12 and 3.13
+- Changed package metadata to PEP 621 from Poetry.
+
 ## v2.0.0 - 2023-02-11
 
 - Removed support for Python 3.6.

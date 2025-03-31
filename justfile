@@ -20,12 +20,12 @@ format:
 
 # Run static typechecking
 typecheck:
-    uv run --python {{python}} --no-dev --group test --isolated \
+    uv run --python {{python}} --no-dev --group typecheck --isolated \
         mypy . --install-types --non-interactive
 
 # Run tests
 test *args:
-    uv run --python {{python}} --no-editable --no-dev --group typecheck --isolated \
+    uv run --python {{python}} --no-editable --no-dev --group test --isolated \
         python -I -m pytest {{args}}
 
 # Run all tests with Python version matrix

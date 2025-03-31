@@ -25,7 +25,7 @@ typecheck:
 
 # Run tests
 test *args:
-    uv run --python {{python}} --no-editable --no-dev --group test --isolated \
+    uv run --python {{python}} --no-editable --no-dev --group typecheck --isolated \
         python -I -m pytest {{args}}
 
 # Run all tests with Python version matrix

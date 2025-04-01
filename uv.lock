@@ -1300,8 +1300,6 @@ dev = [
     { name = "mkdocs-material" },
     { name = "mkdocstrings", version = "0.26.1", source = { registry = "https://pypi.org/simple" }, extra = ["python"], marker = "python_full_version < '3.9'" },
     { name = "mkdocstrings", version = "0.29.1", source = { registry = "https://pypi.org/simple" }, extra = ["python"], marker = "python_full_version >= '3.9'" },
-    { name = "mypy", version = "1.14.1", source = { registry = "https://pypi.org/simple" }, extra = ["install-types"], marker = "python_full_version < '3.9'" },
-    { name = "mypy", version = "1.15.0", source = { registry = "https://pypi.org/simple" }, extra = ["install-types"], marker = "python_full_version >= '3.9'" },
     { name = "ruff" },
 ]
 docs = [
@@ -1313,8 +1311,6 @@ docs = [
     { name = "mkdocstrings", version = "0.29.1", source = { registry = "https://pypi.org/simple" }, extra = ["python"], marker = "python_full_version >= '3.9'" },
 ]
 lint = [
-    { name = "mypy", version = "1.14.1", source = { registry = "https://pypi.org/simple" }, extra = ["install-types"], marker = "python_full_version < '3.9'" },
-    { name = "mypy", version = "1.15.0", source = { registry = "https://pypi.org/simple" }, extra = ["install-types"], marker = "python_full_version >= '3.9'" },
     { name = "ruff" },
 ]
 test = [
@@ -1324,6 +1320,10 @@ test = [
     { name = "pytest-cov", version = "5.0.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.9'" },
     { name = "pytest-cov", version = "6.0.0", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.9'" },
     { name = "requests" },
+]
+typecheck = [
+    { name = "mypy", version = "1.14.1", source = { registry = "https://pypi.org/simple" }, extra = ["install-types"], marker = "python_full_version < '3.9'" },
+    { name = "mypy", version = "1.15.0", source = { registry = "https://pypi.org/simple" }, extra = ["install-types"], marker = "python_full_version >= '3.9'" },
 ]
 
 [package.metadata]
@@ -1339,7 +1339,6 @@ dev = [
     { name = "mkdocs", specifier = ">=1.1.0" },
     { name = "mkdocs-material", specifier = ">=9.0" },
     { name = "mkdocstrings", extras = ["python"], specifier = ">=0.20" },
-    { name = "mypy", extras = ["install-types"], specifier = ">=0.782" },
     { name = "ruff", specifier = ">=0.0.245" },
 ]
 docs = [
@@ -1349,16 +1348,14 @@ docs = [
     { name = "mkdocs-material", specifier = ">=9.0" },
     { name = "mkdocstrings", extras = ["python"], specifier = ">=0.20" },
 ]
-lint = [
-    { name = "mypy", extras = ["install-types"], specifier = ">=0.782" },
-    { name = "ruff", specifier = ">=0.0.245" },
-]
+lint = [{ name = "ruff", specifier = ">=0.0.245" }]
 test = [
     { name = "coverage", specifier = ">=7.1" },
     { name = "pytest", specifier = ">=7.2" },
     { name = "pytest-cov", specifier = ">=4.0" },
     { name = "requests" },
 ]
+typecheck = [{ name = "mypy", extras = ["install-types"], specifier = ">=1.0.0" }]
 
 [[package]]
 name = "requests"

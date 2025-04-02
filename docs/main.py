@@ -7,8 +7,12 @@ def define_env(env):
     def include_readme():
         content = (Path(__file__).parent.parent / "README.md").read_text()
 
-        install_tabs_content = (Path(__file__).parent / "partials" / "installation_tabs.md").read_text()
-        install_pattern = re.compile(r"<!-- Installation start -->(.*?)<!-- Installation end -->", re.DOTALL)
+        install_tabs_content = (
+            Path(__file__).parent / "partials" / "installation_tabs.md"
+        ).read_text()
+        install_pattern = re.compile(
+            r"<!-- Installation start -->(.*?)<!-- Installation end -->", re.DOTALL
+        )
 
         content = install_pattern.sub(install_tabs_content, content)
 

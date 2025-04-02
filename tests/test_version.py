@@ -1,7 +1,7 @@
 from packaging.version import Version
 from packaging.version import parse as parse_version
 
-from quickhttp._version import __version__
+from quickhttp import __version__
 
 
 def test_version():

@@ -16,26 +16,33 @@
 
 ## Installation
 
-You can get `quickhttp` from [PyPI](https://pypi.org/project/quickhttp/). I recommend using [`pipx`](https://pipxproject.github.io/pipx/) to manage Python command-line programs:
+If you're using [uv](https://docs.astral.sh/uv/), you can immediately run it without installing by using `uvx`:
 
 ```bash
-pipx install quickhttp
+uvx quickhttp
 ```
 
-You can also install normally using regular `pip`:
+To install it to be available for later use, you can use any method that installs from [PyPI](https://pypi.org/project/quickhttp/). I recommend using [`uv tool`](https://docs.astral.sh/uv/guides/tools/) or [`pipx`](https://pipxproject.github.io/pipx/) to manage Python command-line programs.
 
+<!-- Installation start -->
 ```bash
+uvx quickhttp
+# or
+uv tool install quickhttp
+# or
+pipx install quickhttp
+# or
 pip install quickhttp
 ```
+<!-- Installation end -->
 
-Requires Python 3.7 or higher. For Python 3.6, install [v1.0.0](https://pypi.org/project/quickhttp/1.0.0/).
 
 ### Development Version
 
-To install the development version of this program, get it directly from GitHub.
+To run the development version of this program, get it directly from GitHub.
 
 ```bash
-pipx install git+https://github.com/jayqi/quickhttp.git
+uvx "quickhttp @ git+https://github.com/jayqi/quickhttp.git"
 ```
 
 ## Documentation
@@ -100,4 +107,4 @@ Options:
 - `python -m http.server` is a pain to type. `quickhttp` is shorter and can autocomplete. (But you can still do `python -m quickhttp` too if you really want to.)
 - If you try starting `python -m http.server` and port 8000 is unavailable, you get `OSError: [Errno 48] Address already in use`. Then you have to choose another port and try again. `quickhttp` deals with ports automatically for you.
 - `quickhttp` will automatically shutdown after the keep-alive time expires. This defaults to 10 minutes. I often start up an HTTP server to look at something, then open a new tab to continue doing things, and then I forget about the server.
-- `python -m http.server` defaults to 0.0.0.0, which may make your server accessible to other people at your computer's IP address. This is a security vulnerability, but isn't necessarily obvious to people who just want to quickly serve some static files.
+- `python -m http.server` defaults to 0.0.0.0, which may make your server accessible to other people at your computer's IP address. This can be a security vulnerability, but isn't necessarily obvious to people who just want to quickly serve some static files.

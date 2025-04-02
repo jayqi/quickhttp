@@ -10,7 +10,7 @@ import pytest
 import requests
 from typer.testing import CliRunner
 
-from quickhttp._version import __version__
+from quickhttp import __version__
 from quickhttp.cli import app
 from quickhttp.http_server import find_available_port, is_port_available
 

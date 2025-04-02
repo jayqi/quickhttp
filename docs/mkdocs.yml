@@ -12,6 +12,13 @@ nav:
 theme:
   name: material
   palette:
+    # Palette toggle for automatic mode
+    - media: "(prefers-color-scheme)"
+      primary: indigo
+      accent: blue
+      toggle:
+        icon: material/brightness-auto
+        name: Switch to light mode
     # Palette toggle for dark mode
     - scheme: slate
       primary: indigo
@@ -20,27 +27,30 @@ theme:
         icon: material/brightness-4
         name: Switch to light mode
     # Palette toggle for light mode
-    - scheme: default
+    - scheme: slate
       primary: indigo
       accent: blue
       toggle:
         icon: material/brightness-7
         name: Switch to dark mode
-  custom_dir: docs/overrides/
+  custom_dir: overrides/
 
 extra_css:
   - css/custom_mkdocstrings.css
 
 markdown_extensions:
+  - mdx_truly_sane_lists:
   - pymdownx.highlight:
   - pymdownx.superfences:
+  - pymdownx.tabbed:
+      alternate_style: true
   - toc:
       permalink: true
       toc_depth: 3
-  - mdx_truly_sane_lists:
 
 plugins:
-  - search
+  - search:
+  - macros:
   - mkdocstrings:
       default_handler: python
       handlers:
@@ -62,9 +72,12 @@ plugins:
             # Additional options
             show_source: true
   - mike:
+      alias_type: copy
       canonical_version: stable
+      version_selector: true
 
 extra:
   version:
     provider: mike
     default: stable
+    alias: true

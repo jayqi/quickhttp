@@ -1,68 +1,78 @@
-[tool.poetry]
+[project]
 name = "quickhttp"
-version = "2.0.0"
+version = "2.1.0"
 description = "Lightweight CLI that wraps Python's http.server with automatic port-finding and shutdown."
-license = "MIT"
-authors = ["Jay Qi <jayqi.opensource@gmail.com>"]
 readme = "README.md"
-homepage = "https://github.com/jayqi/quickhttp"
-repository = "https://github.com/jayqi/quickhttp"
-documentation = "https://jayqi.github.io/quickhttp/"
+license = "MIT"
+license-files = ["LICENSE"]
+authors = [{ name = "Jay Qi", email = "jayqi.opensource@gmail.com" }]
 keywords = ["http server", "dev server"]
 classifiers = [
   "Operating System :: OS Independent",
   "Intended Audience :: Developers",
   "Topic :: Internet :: WWW/HTTP :: HTTP Servers",
 ]
+requires-python = ">=3.8"
+dependencies = [
+  "pytimeparse>=1.1.8",
+  "typer>=0.3.0",
+]
 
-[tool.poetry.scripts]
+[project.urls]
+homepage = "https://github.com/jayqi/quickhttp"
+repository = "https://github.com/jayqi/quickhttp"
+documentation = "https://jayqi.github.io/quickhttp/"
+
+[project.scripts]
 quickhttp = "quickhttp.cli:app"
 
-[tool.poetry.dependencies]
-python = "^3.7"
-importlib-metadata = { version = ">=1.0", python = "<3.8" }
-pytimeparse = "^1.1.8"
-typer = ">=0.3.0"
-
-[tool.poetry.group.dev.dependencies]
-coverage = "^7.1"
-black = ">=19.10b0"
-mdx-truly-sane-lists = "1.3"
-mike = ">=1.1.0"
-mkdocs = "^1.4"
-mkdocs-material = "^9.0"
-mkdocstrings = { version = ">=0.20", extras = ["python"] }
-mypy = ">=0.782"
-packaging = ">=20.4"
-pytest = "^7.2"
-pytest-cov = "^4.0"
-requests = "^2.24"
-ruff = "^0.0.245"
-
 [build-system]
-requires = ["poetry>=0.12"]
-build-backend = "poetry.masonry.api"
+requires = ["hatchling"]
+build-backend = "hatchling.build"
 
-[tool.black]
-line-length = 99
-include = '\.pyi?$'
-exclude = '''
-/(
-    \.git
-  | \.venv
-)/
-'''
+## DEV
+
+[dependency-groups]
+dev = [
+  { include-group = "lint" },
+  { include-group = "docs" },
+]
+lint = [
+  "ruff>=0.0.245",
+]
+docs = [
+  "mdx-truly-sane-lists>=1.3",
+  "mike>=1.1.0",
+  "mkdocs>=1.1.0",
+  "mkdocs-macros-plugin",
+  "mkdocs-material>=9.0",
+  "mkdocstrings[python]>=0.20",
+]
+test = [
+  "pytest>=7.2",
+  "coverage>=7.1",
+  "pytest-cov>=4.0",
+  "requests",
+]
+typecheck = [
+  "mypy[install-types]>=1.0.0",
+]
+
+## TOOLS
 
 [tool.ruff]
 line-length = 99
+src = ["quickhttp", "tests"]
+exclude = ["tests/assets"]
+
+[tool.ruff.lint]
 select = [
   "E", # Pyflakes
   "F", # Pycodestyle
   "I", # isort
 ]
-src = ["quickhttp", "tests"]
 
-[tool.ruff.isort]
+[tool.ruff.lint.isort]
 known-first-party = ["quickhttp"]
 force-sort-within-sections = true
 
@@ -76,3 +86,9 @@ testpaths = ["tests"]
 
 [tool.coverage.run]
 source = ["quickhttp"]
+
+[tool.coverage.paths]
+quickhttp = [
+  "quickhttp/",
+  "**/site-packages/quickhttp/",
+]

@@ -5,7 +5,7 @@ from typing import Optional
 from pytimeparse import parse
 import typer
 
-from quickhttp._version import __version__
+from quickhttp import __version__
 from quickhttp.http_server import (
     DEFAULT_PORT_MAX_TRIES,
     DEFAULT_PORT_RANGE_MAX,

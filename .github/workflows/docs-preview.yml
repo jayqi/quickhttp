@@ -38,7 +38,7 @@ jobs:
       - name: Deploy preview to Netlify
         uses: nwtgck/actions-netlify@v2.0.0
         with:
-          publish-dir: "./site"
+          publish-dir: "./docs/site"
           production-deploy: false
           github-token: ${{ secrets.GITHUB_TOKEN }}
           deploy-message: "Deploy from GitHub Actions"

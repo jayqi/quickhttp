@@ -56,7 +56,8 @@ jobs:
       - name: Deploy as latest
         if: github.event.inputs.deploy-as == 'latest' || github.event_name == 'push'
         run: |
-          uv run mike deploy --push latest --title=latest
+          uv run --directory docs \
+            mike deploy --push latest --title=latest
 
       - name: Get version tag
         id: get-version-tag
@@ -68,12 +69,14 @@ jobs:
       - name: Deploy as version
         if: github.event.inputs.deploy-as == 'version'
         run: |
-          TITLE=$(uv run vspect read .. "v{version}")
+          TITLE=$(uv run vspect read . "v{version}")
           TAG=${{ steps.get-version-tag.outputs.VERSION_TAG }}
-          uv run mike deploy --push $TAG --title="${TITLE}"
+          uv run --directory docs \
+            mike deploy --push $TAG --title="${TITLE}"
 
       - name: Assign stable alias
         if: github.event.inputs.is-stable == 'true'
         run: |
           TAG=${{ steps.get-version-tag.outputs.VERSION_TAG }}
-          uv run mike alias --push --update-aliases $TAG stable
+          uv run --directory docs \
+            mike alias --push --update-aliases $TAG stable

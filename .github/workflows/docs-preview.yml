@@ -23,7 +23,7 @@ jobs:
 
       - name: Build docs
         run: |
-          just docs
+          uv run just docs
 
       - name: Get preview identifier
         id: get_id

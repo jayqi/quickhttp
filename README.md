@@ -107,4 +107,4 @@ Options:
 - `python -m http.server` is a pain to type. `quickhttp` is shorter and can autocomplete. (But you can still do `python -m quickhttp` too if you really want to.)
 - If you try starting `python -m http.server` and port 8000 is unavailable, you get `OSError: [Errno 48] Address already in use`. Then you have to choose another port and try again. `quickhttp` deals with ports automatically for you.
 - `quickhttp` will automatically shutdown after the keep-alive time expires. This defaults to 10 minutes. I often start up an HTTP server to look at something, then open a new tab to continue doing things, and then I forget about the server.
-- `python -m http.server` defaults to 0.0.0.0, which may make your server accessible to other people at your computer's IP address. This is a security vulnerability, but isn't necessarily obvious to people who just want to quickly serve some static files.
+- `python -m http.server` defaults to 0.0.0.0, which may make your server accessible to other people at your computer's IP address. This can be a security vulnerability, but isn't necessarily obvious to people who just want to quickly serve some static files.

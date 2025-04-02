@@ -85,3 +85,9 @@ testpaths = ["tests"]
 
 [tool.coverage.run]
 source = ["quickhttp"]
+
+[tool.coverage.paths]
+quickhttp = [
+  "quickhttp/",
+  "**/site-packages/quickhttp/",
+]

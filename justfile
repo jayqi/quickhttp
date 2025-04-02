@@ -33,3 +33,13 @@ test-all:
     for python in 3.8 3.9 3.10 3.11 3.12 3.13; do \
         just python=$python test; \
     done
+
+# Build docs
+[working-directory: 'docs']
+docs:
+    mkdocs build
+
+# Serve docs
+[working-directory: 'docs']
+docs-serve:
+    mkdocs serve

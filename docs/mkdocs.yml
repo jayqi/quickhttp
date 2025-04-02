@@ -26,21 +26,24 @@ theme:
       toggle:
         icon: material/brightness-7
         name: Switch to dark mode
-  custom_dir: docs/overrides/
+  custom_dir: overrides/
 
 extra_css:
   - css/custom_mkdocstrings.css
 
 markdown_extensions:
+  - mdx_truly_sane_lists:
   - pymdownx.highlight:
   - pymdownx.superfences:
+  - pymdownx.tabbed:
+      alternate_style: true
   - toc:
       permalink: true
       toc_depth: 3
-  - mdx_truly_sane_lists:
 
 plugins:
-  - search
+  - search:
+  - macros:
   - mkdocstrings:
       default_handler: python
       handlers:

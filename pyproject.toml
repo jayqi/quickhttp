@@ -1,6 +1,6 @@
 [project]
 name = "quickhttp"
-version = "2.0.0"
+version = "2.1.0"
 description = "Lightweight CLI that wraps Python's http.server with automatic port-finding and shutdown."
 readme = "README.md"
 license = "MIT"

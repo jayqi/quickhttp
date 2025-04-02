@@ -1,6 +1,6 @@
 # Release Notes
 
-## v2.1.0 - 2025-03-31
+## v2.1.0 - 2025-04-02
 
 - Removed support for Python 3.7
 - Added support for Python 3.12 and 3.13

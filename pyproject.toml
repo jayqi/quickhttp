@@ -36,6 +36,7 @@ build-backend = "hatchling.build"
 dev = [
   { include-group = "lint" },
   { include-group = "docs" },
+  "vspect",
 ]
 lint = [
   "ruff>=0.0.245",

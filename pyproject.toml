@@ -1,6 +1,6 @@
 [project]
 name = "quickhttp"
-version = "2.1.0"
+version = "2.2.0"
 description = "Lightweight CLI that wraps Python's http.server with automatic port-finding and shutdown."
 readme = "README.md"
 license = "MIT"
@@ -9,10 +9,17 @@ authors = [{ name = "Jay Qi", email = "jayqi.opensource@gmail.com" }]
 keywords = ["http server", "dev server"]
 classifiers = [
   "Operating System :: OS Independent",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.9",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Programming Language :: Python :: 3.14",
   "Intended Audience :: Developers",
   "Topic :: Internet :: WWW/HTTP :: HTTP Servers",
 ]
-requires-python = ">=3.8"
+requires-python = ">=3.9"
 dependencies = [
   "pytimeparse>=1.1.8",
   "typer>=0.3.0",
@@ -53,6 +60,7 @@ test = [
   "pytest>=7.2",
   "coverage>=7.1",
   "pytest-cov>=4.0",
+  "pytest-rerunfailures",
   "requests",
 ]
 typecheck = [

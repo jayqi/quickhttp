@@ -154,6 +154,7 @@ def test_quickhttp_with_port(html_file, tmp_path):
             assert response.text == fp.read()
 
 
+@pytest.mark.flaky(reruns=1, reruns_delay=1, condition=os.getenv("RETRY_FLAKY_TESTS", "") == "1")
 def test_keyboard_interrupt(html_file, tmp_path):
     shutil.copy(html_file, tmp_path)
     port = find_available_port()

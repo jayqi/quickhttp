@@ -1,5 +1,10 @@
 # Release Notes
 
+## v2.2.0 - 2025-10-01
+
+- Removed support for Python 3.8
+- Added support for Python 3.14
+
 ## v2.1.0 - 2025-04-02
 
 - Removed support for Python 3.7

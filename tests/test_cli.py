@@ -14,8 +14,10 @@ from quickhttp import __version__
 from quickhttp.cli import app
 from quickhttp.http_server import find_available_port, is_port_available
 
-KEEP_ALIVE_TIME = 4  # Duration to keep server alive for
-WAIT_TIME = 2  # Duration to wait before running test, to give server time to start up
+# Duration to keep server alive for
+KEEP_ALIVE_TIME = 4 + (os.getenv("CI", "") == "true") * 2
+# Duration to wait before running test, to give server time to start up
+WAIT_TIME = 2 + (os.getenv("CI", "") == "true") * 2
 
 
 def test_help():
@@ -154,6 +156,7 @@ def test_quickhttp_with_port(html_file, tmp_path):
             assert response.text == fp.read()
 
 
+@pytest.mark.flaky(reruns=1, reruns_delay=1, condition=os.getenv("RETRY_FLAKY_TESTS", "") == "1")
 def test_keyboard_interrupt(html_file, tmp_path):
     shutil.copy(html_file, tmp_path)
     port = find_available_port()

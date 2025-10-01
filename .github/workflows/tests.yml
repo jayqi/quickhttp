@@ -44,6 +44,8 @@ jobs:
     defaults:
       run:
         shell: bash
+    env:
+      RETRY_FLAKY_TESTS: ${{ github.event_name == 'schedule' && '1' || '' }}
 
     steps:
       - name: Disable git auto-CRLF for Windows

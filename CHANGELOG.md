@@ -1,9 +1,10 @@
 # Release Notes
 
-## v2.2.0 - 2025-10-01
+## v2.2.0 - Unreleased
 
 - Removed support for Python 3.8
 - Added support for Python 3.14
+- Changed the source distribution to contain only the package source, `pyproject.toml`, README, and LICENSE. It previously also included tests and other repository files. This is a result of changing the build backend from hatchling to uv_build.
 
 ## v2.1.0 - 2025-04-02
 

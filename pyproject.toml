@@ -62,7 +62,7 @@ typecheck = [
 
 [tool.ruff]
 line-length = 99
-src = ["quickhttp", "tests"]
+src = ["src", "tests"]
 exclude = ["tests/assets"]
 
 [tool.ruff.lint]
@@ -73,7 +73,6 @@ select = [
 ]
 
 [tool.ruff.lint.isort]
-known-first-party = ["quickhttp"]
 force-sort-within-sections = true
 
 [tool.mypy]
@@ -89,6 +88,7 @@ source = ["quickhttp"]
 
 [tool.coverage.paths]
 quickhttp = [
-  "quickhttp/",
-  "**/site-packages/quickhttp/",
+  "src/quickhttp/",
+  "*/src/quickhttp/",
+  "*/site-packages/quickhttp/",
 ]

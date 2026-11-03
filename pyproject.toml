@@ -41,7 +41,7 @@ build-backend = "uv_build"
 [dependency-groups]
 dev = [
   { include-group = "lint" },
-  "vspect",
+  { include-group = "vspect" },
 ]
 lint = [
   "ruff>=0.0.245",
@@ -55,6 +55,9 @@ test = [
 ]
 typecheck = [
   "mypy[install-types]>=1.0.0",
+]
+vspect = [
+  "vspect",
 ]
 
 ## TOOLS

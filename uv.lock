@@ -336,6 +336,9 @@ test = [
 typecheck = [
     { name = "mypy", extra = ["install-types"] },
 ]
+vspect = [
+    { name = "vspect" },
+]
 
 [package.metadata]
 requires-dist = [
@@ -357,6 +360,7 @@ test = [
     { name = "requests" },
 ]
 typecheck = [{ name = "mypy", extras = ["install-types"], specifier = ">=1.0.0" }]
+vspect = [{ name = "vspect" }]
 
 [[package]]
 name = "requests"

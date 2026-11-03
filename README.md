@@ -2,7 +2,7 @@
 
 [![PyPI](https://img.shields.io/pypi/v/quickhttp.svg)](https://pypi.org/project/quickhttp/)
 [![tests](https://github.com/jayqi/quickhttp/actions/workflows/tests.yml/badge.svg?branch=main)](https://github.com/jayqi/quickhttp/actions/workflows/tests.yml?query=workflow%3Atests+branch%3Amain)
-[![codecov](https://codecov.io/gh/jayqi/quickhttp/branch/main/graph/badge.svg)](https://codecov.io/gh/jayqi/quickhttp)
+[![coverage](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/jayqi/quickhttp/badges/coverage.json)](https://github.com/jayqi/quickhttp/actions/workflows/tests.yml?query=branch%3Amain)
 
 `quickhttp` is a lightweight CLI that wraps Python's `http.server` with automatic port-finding and automatic shutdown after a configurable idle duration.
 

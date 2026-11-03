@@ -1,6 +1,5 @@
 # quickhttp
 
-[![Docs Status](https://img.shields.io/badge/docs-stable-informational)](https://jayqi.github.io/quickhttp/)
 [![PyPI](https://img.shields.io/pypi/v/quickhttp.svg)](https://pypi.org/project/quickhttp/)
 [![tests](https://github.com/jayqi/quickhttp/actions/workflows/tests.yml/badge.svg?branch=main)](https://github.com/jayqi/quickhttp/actions/workflows/tests.yml?query=workflow%3Atests+branch%3Amain)
 [![codecov](https://codecov.io/gh/jayqi/quickhttp/branch/main/graph/badge.svg)](https://codecov.io/gh/jayqi/quickhttp)
@@ -24,7 +23,6 @@ uvx quickhttp
 
 To install it to be available for later use, you can use any method that installs from [PyPI](https://pypi.org/project/quickhttp/). I recommend using [`uv tool`](https://docs.astral.sh/uv/guides/tools/) or [`pipx`](https://pipxproject.github.io/pipx/) to manage Python command-line programs.
 
-<!-- Installation start -->
 ```bash
 uvx quickhttp
 # or
@@ -34,7 +32,6 @@ pipx install quickhttp
 # or
 pip install quickhttp
 ```
-<!-- Installation end -->
 
 
 ### Development Version

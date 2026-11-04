@@ -26,7 +26,7 @@ jobs:
         with:
           just-version: "1.55.0" # Keep in sync with minimum-version in justfile
 
-      - uses: astral-sh/setup-uv@07a047e608db84b3d8c06cd9a7c7dcc9c355c18e # v10.3.2
+      - uses: astral-sh/setup-uv@68559e99cc807c1eb7e9238fd43a15bba460eec2 # v10.3.3
         with:
           enable-cache: true
           cache-suffix: "dev"
@@ -84,7 +84,7 @@ jobs:
         with:
           just-version: "1.55.0" # Keep in sync with minimum-version in justfile
 
-      - uses: astral-sh/setup-uv@07a047e608db84b3d8c06cd9a7c7dcc9c355c18e # v10.3.2
+      - uses: astral-sh/setup-uv@68559e99cc807c1eb7e9238fd43a15bba460eec2 # v10.3.3
         with:
           enable-cache: true
           cache-suffix: "tests-${{ matrix.python-version }}"
@@ -96,7 +96,7 @@ jobs:
           just python=${{ matrix.python-version }} test -vv
 
       - name: Upload coverage to codecov
-        uses: codecov/codecov-action@0fb7174895f61a3b6b78fc075e0cd60383518dac # v5.5.5
+        uses: codecov/codecov-action@303a32d7a59b442fa8d48b6a1cc6825c09c847a5 # v7.1.1
         if: runner.os == 'Linux'
         with:
           token: ${{ secrets.CODECOV_TOKEN }}

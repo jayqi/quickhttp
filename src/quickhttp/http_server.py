@@ -115,7 +115,7 @@ class TimedHTTPServer(HTTPServer):
         self,
         server_address: Tuple[str, int],
         RequestHandlerClass: Callable[..., BaseHTTPRequestHandler],
-        timeout: int,
+        timeout: float,
     ):
         self.timeout = timeout
         self.timeout_reached = False
@@ -127,7 +127,7 @@ class TimedHTTPServer(HTTPServer):
 
 
 def run_timed_http_server(
-    address: str, port: int, directory: Union[str, os.PathLike], timeout: int
+    address: str, port: int, directory: Union[str, os.PathLike], timeout: float
 ):
     """Start a [`TimedHTTPServer`][quickhttp.http_server.TimedHTTPServer] with specified timeout.
 
@@ -135,7 +135,7 @@ def run_timed_http_server(
         address (str): Address to bind the server to.
         port (int): Port to use.
         directory (Union[str, os.PathLike]): Directory to serve.
-        timeout (int): Time to keep server alive for, in seconds.
+        timeout (float): Time to keep server alive for, in seconds.
     """
     handler = partial(SimpleHTTPRequestHandler, directory=str(directory))
 

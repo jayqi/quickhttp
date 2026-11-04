@@ -34,8 +34,8 @@ changelog = "https://github.com/jayqi/quickhttp/blob/main/CHANGELOG.md"
 quickhttp = "quickhttp.cli:app"
 
 [build-system]
-requires = ["hatchling"]
-build-backend = "hatchling.build"
+requires = ["uv_build>=0.13.0,<0.14.0"]
+build-backend = "uv_build"
 
 ## DEV
 
@@ -59,6 +59,9 @@ typecheck = [
 ]
 
 ## TOOLS
+
+[tool.uv]
+exclude-newer = "7 days"
 
 [tool.ruff]
 line-length = 99

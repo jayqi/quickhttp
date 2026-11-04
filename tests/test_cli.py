@@ -34,6 +34,13 @@ def test_version():
     assert result.output.strip() == __version__
 
 
+def test_invalid_timeout():
+    """Test the CLI with a --timeout value that can't be parsed."""
+    result = CliRunner().invoke(app, ["--timeout", "garbage"])
+    assert result.exit_code == 2
+    assert "Unable to parse 'garbage' as a duration." in result.output
+
+
 def test_python_m_version():
     """Test the CLI with --version flag."""
     result = subprocess.run(

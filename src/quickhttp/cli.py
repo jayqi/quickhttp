@@ -81,6 +81,10 @@ def quickhttp(
 ):
     "Lightweight CLI that wraps Python's `http.server` with automatic port-finding and shutdown."
     timeout_sec = parse(timeout)
+    if timeout_sec is None:
+        raise typer.BadParameter(
+            f"Unable to parse {timeout!r} as a duration.", param_hint="'--timeout'"
+        )
     if not port:
         port = find_available_port(
             range_min=port_range_min,

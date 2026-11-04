@@ -54,7 +54,7 @@ tests = [
   "requests",
 ]
 typecheck = [
-  "mypy[install-types]>=1.0.0",
+  "ty",
 ]
 vspect = [
   "vspect",
@@ -80,8 +80,8 @@ select = [
 [tool.ruff.lint.isort]
 force-sort-within-sections = true
 
-[tool.mypy]
-ignore_missing_imports = true
+[tool.ty.src]
+include = ["src"]
 
 [tool.pytest.ini_options]
 minversion = "6.0"

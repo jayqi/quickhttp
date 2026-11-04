@@ -29,7 +29,7 @@ zizmor *args:
 [arg("python", long)]
 typecheck python=python *args:
     uv run --python={{python}} --isolated --no-dev --group typecheck -- \
-        mypy --python-version={{python}} --install-types --non-interactive . {{args}}
+        ty check --python-version={{python}} {{args}}
 
 # Run tests (passes through args)
 [arg("python", long)]

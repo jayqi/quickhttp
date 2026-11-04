@@ -143,7 +143,7 @@ def run_timed_http_server(
         server_address=(address, port), RequestHandlerClass=handler, timeout=timeout
     ) as httpd:
         try:
-            while not httpd.timeout_reached:  # type: ignore
+            while not httpd.timeout_reached:
                 httpd.handle_request()
             typer.echo("Timeout reached.")
         except KeyboardInterrupt:

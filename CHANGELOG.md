@@ -1,6 +1,6 @@
 # Release Notes
 
-## v2.2.0 - Unreleased
+## v2.2.0 - 2026-11-05
 
 - Removed support for Python 3.8, 3.9, and 3.10
 - Added support for Python 3.14 and 3.15

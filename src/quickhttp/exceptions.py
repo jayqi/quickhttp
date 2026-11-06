@@ -2,9 +2,9 @@ class QuickhttpException(Exception):
     """Base exception for all quickhttp custom exceptions."""
 
 
-class NoAvailablePortFoundError(QuickhttpException):
+class InvalidPortRangeError(QuickhttpException, ValueError):
     pass
 
 
-class InvalidSearchTypeError(QuickhttpException, ValueError):
+class InvalidPortError(QuickhttpException, ValueError):
     pass

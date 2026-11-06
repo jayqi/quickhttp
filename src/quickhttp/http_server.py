@@ -24,18 +24,48 @@ _SKIPPABLE_BIND_ERRNOS = frozenset(
 )
 """Bind errors that mean a port is in use or not permitted, as opposed to a bad address."""
 
+_CONFLICT_ERRNOS = frozenset(
+    code
+    for name in ("EADDRINUSE", "WSAEADDRINUSE", "WSAEACCES")
+    if (code := getattr(errno, name, None)) is not None
+)
+"""Bind errors that mean another socket holds the port. Windows reports some conflicts as
+WSAEACCES."""
+
 _CONFLICT_PROBE_HOSTS = ("127.0.0.1", "::1", "0.0.0.0", "::")
-"""Addresses where a port in use makes it unavailable. They're probed separately because on macOS,
-SO_REUSEADDR allows binding a specific address while another socket listens on the wildcard, and
-vice versa."""
+"""Addresses where a port in use makes it unavailable. They're probed separately because on macOS
+and Windows, binding a specific address can succeed while another socket listens on the wildcard,
+and vice versa."""
 
 
-def _set_bind_options(sock: socket.socket) -> None:
+def _prepare_socket(sock: socket.socket) -> None:
+    if sock.family == socket.AF_INET6:
+        with suppress(OSError):
+            sock.setsockopt(socket.IPPROTO_IPV6, socket.IPV6_V6ONLY, 0)
     # On Windows, SO_REUSEADDR allows binding a port that another socket is listening on.
     if os.name == "nt":
         sock.setsockopt(socket.SOL_SOCKET, getattr(socket, "SO_EXCLUSIVEADDRUSE"), 1)
     else:
         sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+
+
+def _check_port_free(port: int) -> None:
+    """Raise OSError if the port is in use on any of the probe hosts. Each probe binds a
+    throwaway socket and closes it without listening.
+    """
+    for host in _CONFLICT_PROBE_HOSTS:
+        family = socket.AF_INET6 if ":" in host else socket.AF_INET
+        try:
+            sock = socket.socket(family, socket.SOCK_STREAM)
+        except OSError:
+            continue  # Address family not supported on this host
+        with sock:
+            _prepare_socket(sock)
+            try:
+                sock.bind((host, port))
+            except OSError as e:
+                if e.errno in _CONFLICT_ERRNOS:
+                    raise OSError(e.errno, f"Port {port} is already in use on {host}") from e
 
 
 class _Handler(SimpleHTTPRequestHandler):
@@ -65,6 +95,10 @@ class QuickHTTPServer(ThreadingHTTPServer):
     Use [`create_server`][quickhttp.http_server.create_server] to create one with automatic
     port selection.
 
+    A nonzero port counts as in use if it's bound on the server's address or on any loopback
+    (`127.0.0.1`, `::1`) or all-interfaces (`0.0.0.0`, `::`) address, so that `localhost` can't
+    reach a different server. On some platforms, a port in use on any address also counts.
+
     Args:
         server_address (tuple[str, int]): Address and port to bind to. The address can be a
             hostname or an IPv4 or IPv6 address. `"::"` also accepts IPv4 connections where
@@ -72,7 +106,7 @@ class QuickHTTPServer(ThreadingHTTPServer):
         directory (str | os.PathLike[str]): Directory to serve.
     """
 
-    allow_reuse_address = False  # _set_bind_options sets this per platform
+    allow_reuse_address = False  # _prepare_socket sets this per platform
 
     def __init__(self, server_address: tuple[str, int], directory: str | os.PathLike[str]):
         host, port = server_address
@@ -89,10 +123,10 @@ class QuickHTTPServer(ThreadingHTTPServer):
         )
 
     def server_bind(self):
-        if self.address_family == socket.AF_INET6:
-            with suppress(OSError):
-                self.socket.setsockopt(socket.IPPROTO_IPV6, socket.IPV6_V6ONLY, 0)
-        _set_bind_options(self.socket)
+        _prepare_socket(self.socket)
+        # Probes run before the real bind. On Linux, they'd conflict with this socket after it.
+        if self.server_address[1] != 0:
+            _check_port_free(int(self.server_address[1]))
         # Skips HTTPServer.server_bind, whose reverse DNS lookup for server_name can hang.
         socketserver.TCPServer.server_bind(self)
         self.server_name = self.host
@@ -154,25 +188,6 @@ class QuickHTTPServer(ThreadingHTTPServer):
             self.shutdown()
 
 
-def _port_free_on(host: str, port: int) -> bool:
-    family = socket.AF_INET6 if ":" in host else socket.AF_INET
-    try:
-        sock = socket.socket(family, socket.SOCK_STREAM)
-    except OSError:
-        return True  # Address family not supported on this host
-    with sock:
-        _set_bind_options(sock)
-        try:
-            sock.bind((host, port))
-        except OSError as e:
-            return e.errno not in _SKIPPABLE_BIND_ERRNOS
-    return True
-
-
-def _port_in_use(port: int) -> bool:
-    return not all(_port_free_on(host, port) for host in _CONFLICT_PROBE_HOSTS)
-
-
 def create_server(
     directory: str | os.PathLike[str],
     bind: str = "127.0.0.1",
@@ -182,12 +197,10 @@ def create_server(
     """Create a [`QuickHTTPServer`][quickhttp.http_server.QuickHTTPServer] bound to an
     available port.
 
-    A port counts as in use if it's bound on `bind` or on any loopback (`127.0.0.1`, `::1`) or
-    all-interfaces (`0.0.0.0`, `::`) address, so that `localhost` can't reach a different server.
-
     If `port` is None, tries each port in `port_range` in ascending order and uses the first
-    one that isn't in use. If no port in the range is available, uses a port chosen by the
-    operating system.
+    one that isn't in use and can be bound. If no port in the range is available, uses a port
+    chosen by the operating system. See [`QuickHTTPServer`][quickhttp.http_server.QuickHTTPServer]
+    for which ports count as in use. Ports chosen by the operating system aren't checked.
 
     Args:
         directory (str | os.PathLike[str]): Directory to serve.
@@ -222,13 +235,9 @@ def create_server(
     )
 
     if port is not None:
-        if port != 0 and _port_in_use(port):
-            raise OSError(errno.EADDRINUSE, "Address already in use")
         return QuickHTTPServer((host, port), directory)
 
     for candidate in range(range_min, range_max + 1):
-        if _port_in_use(candidate):
-            continue
         try:
             return QuickHTTPServer((host, candidate), directory)
         except OSError as e:

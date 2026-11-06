@@ -3,12 +3,12 @@
 ## v3.0.0 - Unreleased
 
 - Changed the server to handle requests concurrently. Previously, a connection that sent nothing, such as one a browser opens ahead of time, blocked all other requests and kept the server from shutting down, which could show as a blank page.
-- Changed how ports in use are detected, from connecting to `127.0.0.1` to binding the port. A port now counts as in use if it's bound on the address being served or on any loopback (`127.0.0.1`, `::1`) or all-interfaces (`0.0.0.0`, `::`) address, so that `localhost` can't reach a different server. The port search skips such ports, and an explicit `--port` that's in use is reported as an error.
+- Changed how ports in use are detected, from connecting to `127.0.0.1` to binding the port. A port now counts as in use if it's bound on the address being served or on any loopback (`127.0.0.1`, `::1`) or all-interfaces (`0.0.0.0`, `::`) address, so that `localhost` can't reach a different server. On some platforms, a port in use on any address also counts. The port search skips such ports, and an explicit `--port` that's in use is reported as an error that names the conflicting address.
 - Changed the port search to use a port chosen by the operating system when no port in the range is available, instead of failing.
 - Changed `--port 0` to use a port chosen by the operating system. It previously searched the port range.
 - Changed the idle timeout to wait for in-progress requests to finish, and to count from the end of the most recent request.
 - Added support for IPv6 bind addresses, including `::` for all interfaces over both IPv4 and IPv6.
-- Changed a hostname `--bind` value, such as `localhost`, to bind the first address the hostname resolves to, which may be IPv6. It previously always bound an IPv4 address.
+- Changed a hostname `--bind` value, such as `localhost`, to bind the first address the hostname resolves to, which may be IPv6. It previously always bound an IPv4 address. Similarly, `--bind ''` now binds the platform's first all-interfaces address, which may be `::`, instead of always `0.0.0.0`.
 - Added a `Cache-Control: no-store` header to responses, so that browsers don't show stale files.
 - Added validation that the served directory exists, that `--timeout` is positive, that `--port` is between 0 and 65535, and that the port range is valid.
 - Fixed slow startup on machines where looking up the computer's own hostname is slow. The server no longer does that lookup.

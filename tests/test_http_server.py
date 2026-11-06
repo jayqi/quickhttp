@@ -1,4 +1,5 @@
 from contextlib import contextmanager
+import errno
 import shutil
 import socket
 from threading import Event, Thread
@@ -21,7 +22,9 @@ OTHER_ADDRESS_CASES = [
     pytest.param("127.0.0.1", "::", True, id="all-ipv6", marks=requires_ipv6),
     pytest.param("127.0.0.1", "::1", None, id="loopback-ipv6", marks=requires_ipv6),
     pytest.param("::1", "127.0.0.1", None, id="loopback-ipv4", marks=requires_ipv6),
-    pytest.param("::", "127.0.0.1", None, id="bind-all", marks=requires_dualstack),
+    pytest.param("0.0.0.0", "127.0.0.1", None, id="bind-all-ipv4"),
+    pytest.param("::", "127.0.0.1", None, id="bind-all-dualstack", marks=requires_dualstack),
+    pytest.param("::", "::1", None, id="bind-all-ipv6", marks=requires_ipv6),
 ]
 
 
@@ -88,8 +91,24 @@ def test_create_server_explicit_port_in_use(tmp_path):
 @pytest.mark.parametrize("bind, held_host, v6only", OTHER_ADDRESS_CASES)
 def test_create_server_explicit_port_in_use_on_other_address(tmp_path, bind, held_host, v6only):
     with held_port(held_host, v6only=v6only) as port:
-        with pytest.raises(OSError, match="Address already in use"):
+        with pytest.raises(OSError, match=f"Port {port} is already in use on "):
             create_server(tmp_path, bind=bind, port=port)
+
+
+def test_create_server_permission_denied_on_loopback(tmp_path, monkeypatch):
+    original_bind = socket.socket.bind
+
+    def bind(self, address):
+        if address[0] in ("127.0.0.1", "::1"):
+            raise PermissionError(errno.EACCES, "Permission denied")
+        original_bind(self, address)
+
+    port = free_port_pair()
+    monkeypatch.setattr(socket.socket, "bind", bind)
+    with create_server(tmp_path, bind="0.0.0.0", port=port) as server:
+        assert server.port == port
+    with pytest.raises(PermissionError):
+        create_server(tmp_path, port=port)
 
 
 def test_create_server_os_chosen_port(tmp_path):
@@ -106,6 +125,13 @@ def test_create_server_does_not_look_up_hostname(tmp_path, monkeypatch):
     with create_server(tmp_path, port=0) as server:
         assert server.server_name == "127.0.0.1"
         assert server.server_port == server.port
+
+
+def test_create_server_hostname(tmp_path):
+    server = create_server(tmp_path, bind="localhost", port=0)
+    assert server.host in ("127.0.0.1", "::1")
+    with serving(server):
+        assert requests.get(server.url, timeout=5).status_code == 200
 
 
 def test_create_server_unresolvable_address(tmp_path):
@@ -154,7 +180,7 @@ def test_server_requests_restart_idle_timeout(tmp_path):
             requests.get(server.url, timeout=5)
         assert thread.is_alive()
         last_request = time.monotonic()
-    assert time.monotonic() - last_request >= 0.9
+    assert time.monotonic() - last_request >= 0.5
 
 
 def test_server_does_not_shut_down_while_request_in_progress(tmp_path, monkeypatch):

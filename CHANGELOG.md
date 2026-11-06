@@ -3,20 +3,19 @@
 ## v3.0.0 - Unreleased
 
 - Changed the server to handle requests concurrently. Previously, a connection that sent nothing, such as one a browser opens ahead of time, blocked all other requests and kept the server from shutting down, which could show as a blank page.
-- Changed how ports in use are detected, from connecting to `127.0.0.1` to binding the port. A port now counts as in use if it's bound on the address being served or on any loopback (`127.0.0.1`, `::1`) or all-interfaces (`0.0.0.0`, `::`) address, so that `localhost` can't reach a different server. On some platforms, a port in use on any address also counts. The port search skips such ports, and an explicit `--port` that's in use is reported as an error.
-- Changed the port search to use a port chosen by the operating system when no port in the range is available, instead of failing.
+- Changed the CLI to use Python's `argparse` instead of typer, which is no longer a dependency. This changes the format of help and error messages, adds `-h` as a short form of `--help`, and removes the `--install-completion` and `--show-completion` options.
+- Changed the port search to try every port in the range in ascending order, and to use a port chosen by the operating system if none is available, instead of failing. Removed the `--port-search-type` and `--port-max-tries` options.
+- Changed which ports count as in use. A port is now in use if it's bound on the address being served or on any loopback (`127.0.0.1`, `::1`) or all-interfaces (`0.0.0.0`, `::`) address, so that `localhost` can't reach a different server. The port search skips such ports, and an explicit `--port` that's in use is reported as an error.
 - Changed `--port 0` to use a port chosen by the operating system. It previously searched the port range.
-- Changed the idle timeout to wait for in-progress requests to finish, and to count from the end of the most recent request.
-- Added support for IPv6 bind addresses, including `::` for all interfaces over both IPv4 and IPv6.
-- Changed a hostname `--bind` value, such as `localhost`, to bind the first address the hostname resolves to, which may be IPv6. It previously always bound an IPv4 address. Similarly, `--bind ''` now binds the platform's first all-interfaces address, which may be `::`, instead of always `0.0.0.0`.
+- Added support for IPv6 bind addresses, including `::` for all interfaces over both IPv4 and IPv6. A hostname `--bind` value such as `localhost` now binds the first address it resolves to, which may be IPv6, instead of always an IPv4 address.
 - Added a `Cache-Control: no-store` header to responses, so that browsers don't show stale files.
 - Added validation that the served directory exists, that `--timeout` is positive, that `--port` is between 0 and 65535, and that the port range is valid.
-- Fixed slow startup on machines where looking up the computer's own hostname is slow. The server no longer does that lookup.
 - Changed bind failures, such as a port in use or an address that can't be resolved, to be reported as an error message instead of a traceback.
-- Changed the CLI to use Python's `argparse` instead of typer, which is no longer a dependency. This changes the format of help and error messages, and removes the `--install-completion` and `--show-completion` options. The CLI's entry point in the Python API is now `quickhttp.cli.main` instead of `quickhttp.cli.app`.
-- Removed the `--port-search-type` and `--port-max-tries` options. The port search now always tries ports in ascending order.
-- Removed `TimedHTTPServer`, `run_timed_http_server`, `is_port_available`, `find_available_port`, `SearchType`, `DEFAULT_PORT_MAX_TRIES`, `DEFAULT_PORT_SEARCH_TYPE`, `NoAvailablePortFoundError`, and `InvalidSearchTypeError` from the Python API.
-- Added `QuickHTTPServer`, `create_server`, `InvalidPortError`, and `InvalidPortRangeError` to the Python API.
+- Fixed slow startup on machines where looking up the computer's own hostname is slow.
+- Changed the Python API:
+  - Added `QuickHTTPServer`, `create_server`, `InvalidPortError`, and `InvalidPortRangeError`.
+  - Removed `TimedHTTPServer`, `run_timed_http_server`, `is_port_available`, `find_available_port`, `SearchType`, `DEFAULT_PORT_MAX_TRIES`, `DEFAULT_PORT_SEARCH_TYPE`, `NoAvailablePortFoundError`, and `InvalidSearchTypeError`.
+  - Changed the CLI's entry point from `quickhttp.cli.app` to `quickhttp.cli.main`.
 
 ## v2.2.0 - 2026-11-05
 

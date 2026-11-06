@@ -1,96 +1,118 @@
+import argparse
+from collections.abc import Sequence
 from datetime import timedelta
 from pathlib import Path
-from typing import Optional
+import sys
 
 from pytimeparse import parse
-import typer
 
 from quickhttp import __version__
 from quickhttp.exceptions import InvalidPortError, InvalidPortRangeError
 from quickhttp.http_server import DEFAULT_PORT_RANGE_MAX, DEFAULT_PORT_RANGE_MIN, create_server
 
-app = typer.Typer()
+
+def _duration(value: str) -> float:
+    seconds = parse(value)
+    if seconds is None:
+        raise argparse.ArgumentTypeError(f"Unable to parse {value!r} as a duration.")
+    if seconds <= 0:
+        raise argparse.ArgumentTypeError(f"Duration must be positive, got {value!r}.")
+    return seconds
 
 
-def version_callback(value: bool):
-    if value:
-        typer.echo(__version__)
-        raise typer.Exit()
-
-
-@app.command()
-def quickhttp(
-    directory: Path = typer.Argument(
-        ".",
-        exists=True,
-        dir_okay=True,
-        file_okay=False,
-        readable=True,
-        help="Directory to serve.",
-    ),
-    timeout: str = typer.Option(
-        "10m",
-        "--timeout",
+def _parser(prog: str | None = None) -> argparse.ArgumentParser:
+    parser = argparse.ArgumentParser(
+        prog=prog,
+        allow_abbrev=False,
+        description=(
+            "Lightweight CLI that wraps Python's `http.server` with automatic port-finding and "
+            "shutdown."
+        ),
+    )
+    parser.add_argument(
+        "directory",
+        nargs="?",
+        default=".",
+        type=Path,
+        help="Directory to serve. (default: %(default)s)",
+    )
+    parser.add_argument(
         "-t",
+        "--timeout",
+        default="10m",
+        type=_duration,
+        metavar="DURATION",
         help=(
             "Time to keep server alive for after most recent request. Accepts time expressions "
-            "parsable by pytimeparse, such as '10m' or '10:00'."
+            "parsable by pytimeparse, such as '10m' or '10:00'. (default: %(default)s)"
         ),
-    ),
-    bind: str = typer.Option(
-        "127.0.0.1",
-        "--bind",
+    )
+    parser.add_argument(
         "-b",
+        "--bind",
+        default="127.0.0.1",
+        metavar="ADDRESS",
         help=(
             "Address to bind server to. '127.0.0.1' (IPv4) or '::1' (IPv6) will only be "
             "accessible from this computer. '0.0.0.0' (IPv4) or '::' (IPv4 and IPv6) is all "
             "interfaces (IP addresses) on this computer, meaning that it can be accessible by "
             "other computers at your IP address. A hostname binds the first address it "
-            "resolves to."
+            "resolves to. (default: %(default)s)"
         ),
-    ),
-    port: Optional[int] = typer.Option(
-        None,
-        "--port",
+    )
+    parser.add_argument(
         "-p",
+        "--port",
+        type=int,
         help=(
             "Port to use. 0 uses a port chosen by the operating system. If specified, ignores "
             "the port range options. If not specified, searches the port range for an available "
             "port, and uses a port chosen by the operating system if none is available."
         ),
-    ),
-    port_range_min: int = typer.Option(
-        DEFAULT_PORT_RANGE_MIN, help="Minimum of range to search for an available port."
-    ),
-    port_range_max: int = typer.Option(
-        DEFAULT_PORT_RANGE_MAX, help="Maximum of range to search for an available port."
-    ),
-    version: bool = typer.Option(
-        False,
-        "--version",
-        callback=version_callback,
-        is_eager=True,
-        help="Show version and exit.",
-        show_default=False,
-    ),
-):
-    "Lightweight CLI that wraps Python's `http.server` with automatic port-finding and shutdown."
-    timeout_sec = parse(timeout)
-    if timeout_sec is None:
-        raise typer.BadParameter(
-            f"Unable to parse {timeout!r} as a duration.", param_hint="'--timeout'"
-        )
-    if timeout_sec <= 0:
-        raise typer.BadParameter(
-            f"Duration must be positive, got {timeout!r}.", param_hint="'--timeout'"
-        )
-    port_range = (port_range_min, port_range_max)
+    )
+    parser.add_argument(
+        "--port-range-min",
+        default=DEFAULT_PORT_RANGE_MIN,
+        type=int,
+        metavar="PORT",
+        help="Minimum of range to search for an available port. (default: %(default)s)",
+    )
+    parser.add_argument(
+        "--port-range-max",
+        default=DEFAULT_PORT_RANGE_MAX,
+        type=int,
+        metavar="PORT",
+        help="Maximum of range to search for an available port. (default: %(default)s)",
+    )
+    parser.add_argument(
+        "--version", action="version", version=__version__, help="Show version and exit."
+    )
+    return parser
+
+
+def main(argv: Sequence[str] | None = None, prog: str | None = None) -> None:
+    """Run the quickhttp command-line program."""
+    parser = _parser(prog)
+    args = parser.parse_args(argv)
+    directory: Path = args.directory
+    timeout_sec: float = args.timeout
+    bind: str = args.bind
+    port: int | None = args.port
+    port_range_min: int = args.port_range_min
+    port_range_max: int = args.port_range_max
+
+    if not directory.exists():
+        parser.error(f"argument directory: '{directory}' does not exist.")
+    if not directory.is_dir():
+        parser.error(f"argument directory: '{directory}' is not a directory.")
     try:
-        server = create_server(directory, bind=bind, port=port, port_range=port_range)
+        server = create_server(
+            directory, bind=bind, port=port, port_range=(port_range_min, port_range_max)
+        )
     except InvalidPortError as e:
-        raise typer.BadParameter(str(e), param_hint="'--port' / '-p'")
+        parser.error(f"argument -p/--port: {e}")
     except InvalidPortRangeError as e:
-        raise typer.BadParameter(str(e), param_hint="'--port-range-min' / '--port-range-max'")
+        parser.error(f"argument --port-range-min/--port-range-max: {e}")
     except OSError as e:
         if port is None:
             target = bind
@@ -98,22 +120,23 @@ def quickhttp(
             target = f"[{bind}]:{port}"
         else:
             target = f"{bind}:{port}"
-        typer.echo(f"Could not bind to {target}: {e.strerror or e}", err=True)
-        raise typer.Exit(code=1)
+        print(f"Could not bind to {target}: {e.strerror or e}", file=sys.stderr)
+        sys.exit(1)
 
     with server:
         if port is None and not port_range_min <= server.port <= port_range_max:
-            typer.echo(
+            print(
                 f"No available port in range [{port_range_min}, {port_range_max}]. "
                 f"Using port {server.port} chosen by the operating system."
             )
-        typer.echo(
+        print(
             f"Serving {directory.resolve()} at {server.url}. Shutting down after "
-            f"{timedelta(seconds=timeout_sec)} without requests."
+            f"{timedelta(seconds=timeout_sec)} without requests.",
+            flush=True,
         )
         try:
             server.serve_until_idle(timeout_sec)
-            typer.echo("Timeout reached.")
+            print("Timeout reached.")
         except KeyboardInterrupt:
-            typer.echo(" KeyboardInterrupt received.")
-    typer.echo("Server closed.")
+            print(" KeyboardInterrupt received.")
+    print("Server closed.")

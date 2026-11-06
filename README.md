@@ -50,51 +50,41 @@ quickhttp --help
 ```
 
 ```text
-Usage: quickhttp [OPTIONS] [directory]
+usage: quickhttp [-h] [-t DURATION] [-b ADDRESS] [-p PORT]
+                 [--port-range-min PORT] [--port-range-max PORT] [--version]
+                 [directory]
 
 Lightweight CLI that wraps Python's `http.server` with automatic port-finding
 and shutdown.
 
-╭─ Arguments ──────────────────────────────────────────────────────────────────╮
-│   directory      <directory>  Directory to serve. [default: .]               │
-╰──────────────────────────────────────────────────────────────────────────────╯
-╭─ Options ────────────────────────────────────────────────────────────────────╮
-│ --timeout             -t      <str>  Time to keep server alive for after     │
-│                                      most recent request. Accepts time       │
-│                                      expressions parsable by pytimeparse,    │
-│                                      such as '10m' or '10:00'.               │
-│                                      [default: 10m]                          │
-│ --bind                -b      <str>  Address to bind server to. '127.0.0.1'  │
-│                                      (IPv4) or '::1' (IPv6) will only be     │
-│                                      accessible from this computer.          │
-│                                      '0.0.0.0' (IPv4) or '::' (IPv4 and      │
-│                                      IPv6) is all interfaces (IP addresses)  │
-│                                      on this computer, meaning that it can   │
-│                                      be accessible by other computers at     │
-│                                      your IP address. A hostname binds the   │
-│                                      first address it resolves to.           │
-│                                      [default: 127.0.0.1]                    │
-│ --port                -p      <int>  Port to use. 0 uses a port chosen by    │
-│                                      the operating system. If specified,     │
-│                                      ignores the port range options. If not  │
-│                                      specified, searches the port range for  │
-│                                      an available port, and uses a port      │
-│                                      chosen by the operating system if none  │
-│                                      is available.                           │
-│ --port-range-min              <int>  Minimum of range to search for an       │
-│                                      available port.                         │
-│                                      [default: 8000]                         │
-│ --port-range-max              <int>  Maximum of range to search for an       │
-│                                      available port.                         │
-│                                      [default: 8999]                         │
-│ --version                            Show version and exit.                  │
-│ --install-completion                 Install completion for the current      │
-│                                      shell.                                  │
-│ --show-completion                    Show completion for the current shell,  │
-│                                      to copy it or customize the             │
-│                                      installation.                           │
-│ --help                               Show this message and exit.             │
-╰──────────────────────────────────────────────────────────────────────────────╯
+positional arguments:
+  directory             Directory to serve. (default: .)
+
+options:
+  -h, --help            show this help message and exit
+  -t, --timeout DURATION
+                        Time to keep server alive for after most recent
+                        request. Accepts time expressions parsable by
+                        pytimeparse, such as '10m' or '10:00'. (default: 10m)
+  -b, --bind ADDRESS    Address to bind server to. '127.0.0.1' (IPv4) or '::1'
+                        (IPv6) will only be accessible from this computer.
+                        '0.0.0.0' (IPv4) or '::' (IPv4 and IPv6) is all
+                        interfaces (IP addresses) on this computer, meaning
+                        that it can be accessible by other computers at your
+                        IP address. A hostname binds the first address it
+                        resolves to. (default: 127.0.0.1)
+  -p, --port PORT       Port to use. 0 uses a port chosen by the operating
+                        system. If specified, ignores the port range options.
+                        If not specified, searches the port range for an
+                        available port, and uses a port chosen by the
+                        operating system if none is available.
+  --port-range-min PORT
+                        Minimum of range to search for an available port.
+                        (default: 8000)
+  --port-range-max PORT
+                        Maximum of range to search for an available port.
+                        (default: 8999)
+  --version             Show version and exit.
 ```
 
 ## Why use `quickhttp`?

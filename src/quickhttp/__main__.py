@@ -1,3 +1,3 @@
-from quickhttp.cli import app
+from quickhttp.cli import main
 
-app(prog_name="python -m quickhttp")
+main(prog="python -m quickhttp")

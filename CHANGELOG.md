@@ -13,6 +13,7 @@
 - Added validation that the served directory exists, that `--timeout` is positive, that `--port` is between 0 and 65535, and that the port range is valid.
 - Fixed slow startup on machines where looking up the computer's own hostname is slow. The server no longer does that lookup.
 - Changed bind failures, such as a port in use or an address that can't be resolved, to be reported as an error message instead of a traceback.
+- Changed the CLI to use Python's `argparse` instead of typer, which is no longer a dependency. This changes the format of help and error messages, and removes the `--install-completion` and `--show-completion` options. The CLI's entry point in the Python API is now `quickhttp.cli.main` instead of `quickhttp.cli.app`.
 - Removed the `--port-search-type` and `--port-max-tries` options. The port search now always tries ports in ascending order.
 - Removed `TimedHTTPServer`, `run_timed_http_server`, `is_port_available`, `find_available_port`, `SearchType`, `DEFAULT_PORT_MAX_TRIES`, `DEFAULT_PORT_SEARCH_TYPE`, `NoAvailablePortFoundError`, and `InvalidSearchTypeError` from the Python API.
 - Added `QuickHTTPServer`, `create_server`, `InvalidPortError`, and `InvalidPortRangeError` to the Python API.

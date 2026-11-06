@@ -10,6 +10,7 @@
 - Added support for IPv6 bind addresses, including `::` for all interfaces over both IPv4 and IPv6.
 - Added a `Cache-Control: no-cache` header to responses, so that browsers don't show stale files.
 - Added validation that the served directory exists, that `--timeout` is positive, and that the port range is valid.
+- Fixed slow startup on machines where looking up the computer's own hostname is slow. The server no longer does that lookup.
 - Changed bind failures, such as a port in use or an address that can't be resolved, to be reported as an error message instead of a traceback.
 - Removed the `--port-search-type` and `--port-max-tries` options. The port search now always tries ports in ascending order.
 - Removed `TimedHTTPServer`, `run_timed_http_server`, `is_port_available`, `find_available_port`, `SearchType`, `NoAvailablePortFoundError`, and `InvalidSearchTypeError` from the Python API.

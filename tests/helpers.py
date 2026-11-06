@@ -1,5 +1,9 @@
 from contextlib import contextmanager
+import os
+import random
 import socket
+
+from quickhttp.http_server import QuickHTTPServer
 
 
 @contextmanager
@@ -16,13 +20,19 @@ def held_port(host: str = "127.0.0.1", port: int = 0, v6only: bool | None = None
         yield sock.getsockname()[1]
 
 
-def free_port_pair(host: str = "127.0.0.1") -> int:
-    """Return a port N such that N and N + 1 are both free on host."""
+def free_port_pair() -> int:
+    """Return a port N such that a server can bind N and N + 1 on 127.0.0.1. N is drawn from
+    below the operating systems' default ephemeral port ranges, which start at 32768 on Linux
+    and 49152 on macOS and Windows, so the OS doesn't assign N + 1 to another socket while the
+    test runs.
+    """
     for _ in range(50):
-        with held_port(host) as port:
-            pass
+        port = random.randrange(20000, 30000)
         try:
-            with held_port(host, port), held_port(host, port + 1):
+            with (
+                QuickHTTPServer(("127.0.0.1", port), os.curdir),
+                QuickHTTPServer(("127.0.0.1", port + 1), os.curdir),
+            ):
                 return port
         except OSError:
             continue

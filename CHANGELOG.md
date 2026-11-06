@@ -1,5 +1,20 @@
 # Release Notes
 
+## v3.0.0 - Unreleased
+
+- Changed the server to handle requests concurrently. Previously, a connection that sent nothing, such as one a browser opens ahead of time, blocked all other requests and kept the server from shutting down, which could show as a blank page.
+- Changed the port search to bind each candidate port instead of connecting to it. It now detects ports in use on any address, and skips ports in use on the other loopback address (`::1` when binding `127.0.0.1`, and the reverse) so that `localhost` can't reach a different server.
+- Changed the port search to use a port chosen by the operating system when no port in the range is available, instead of failing.
+- Changed `--port 0` to use a port chosen by the operating system. It previously searched the port range.
+- Changed the idle timeout to wait for in-progress requests to finish, and to count from the end of the most recent request.
+- Added support for IPv6 bind addresses, including `::` for all interfaces over both IPv4 and IPv6.
+- Added a `Cache-Control: no-cache` header to responses, so that browsers don't show stale files.
+- Added validation that the served directory exists, that `--timeout` is positive, and that the port range is valid.
+- Changed bind failures, such as a port in use or an address that can't be resolved, to be reported as an error message instead of a traceback.
+- Removed the `--port-search-type` and `--port-max-tries` options. The port search now always tries ports in ascending order.
+- Removed `TimedHTTPServer`, `run_timed_http_server`, `is_port_available`, `find_available_port`, `SearchType`, `NoAvailablePortFoundError`, and `InvalidSearchTypeError` from the Python API.
+- Added `QuickHTTPServer`, `create_server`, and `InvalidPortRangeError` to the Python API.
+
 ## v2.2.0 - 2026-11-05
 
 - Removed support for Python 3.8, 3.9, and 3.10

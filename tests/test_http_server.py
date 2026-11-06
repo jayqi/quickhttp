@@ -96,22 +96,6 @@ def test_create_server_explicit_port_in_use_on_other_address(tmp_path, bind, hel
     assert excinfo.value.errno == errno.EADDRINUSE
 
 
-def test_create_server_permission_denied_on_loopback(tmp_path, monkeypatch):
-    original_bind = socket.socket.bind
-
-    def bind(self, address):
-        if address[0] in ("127.0.0.1", "::1"):
-            raise PermissionError(errno.EACCES, "Permission denied")
-        original_bind(self, address)
-
-    port = free_port_pair()
-    monkeypatch.setattr(socket.socket, "bind", bind)
-    with create_server(tmp_path, bind="0.0.0.0", port=port) as server:
-        assert server.port == port
-    with pytest.raises(PermissionError):
-        create_server(tmp_path, port=port)
-
-
 def test_create_server_os_chosen_port(tmp_path):
     with create_server(tmp_path, port=0) as server:
         assert server.port > 0

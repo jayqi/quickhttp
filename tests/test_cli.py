@@ -1,3 +1,4 @@
+from dataclasses import dataclass
 import re
 import shutil
 import signal
@@ -7,21 +8,29 @@ import sys
 
 import pytest
 import requests
-from typer.testing import CliRunner
 
 from helpers import free_port_pair, held_port
 from quickhttp import __version__
-from quickhttp.cli import app
+from quickhttp.cli import main
 
 URL_PATTERN = re.compile(r" at (http://\S+/)\. ")
-ANSI_ESCAPE_PATTERN = re.compile(r"\x1b\[[0-9;]*m")
 
 
-def unwrapped(output: str) -> str:
-    """Remove the colors, line wrapping, and box drawing that typer adds around error
-    messages.
-    """
-    return " ".join(ANSI_ESCAPE_PATTERN.sub("", output).replace("│", " ").split())
+@dataclass
+class Result:
+    exit_code: int
+    output: str
+
+
+def invoke(capsys: pytest.CaptureFixture[str], args: list[str]) -> Result:
+    """Run the CLI in this process and capture its exit code and combined stdout and stderr."""
+    try:
+        main(args)
+        exit_code = 0
+    except SystemExit as e:
+        exit_code = e.code if isinstance(e.code, int) else 1
+    captured = capsys.readouterr()
+    return Result(exit_code=exit_code, output=captured.out + captured.err)
 
 
 def start_quickhttp(*args: str) -> tuple[subprocess.Popen[str], str]:
@@ -42,16 +51,16 @@ def start_quickhttp(*args: str) -> tuple[subprocess.Popen[str], str]:
     return process, match.group(1)
 
 
-def test_help():
+def test_help(capsys):
     """Test the CLI with --help flag."""
-    result = CliRunner().invoke(app, ["--help"])
+    result = invoke(capsys, ["--help"])
     assert result.exit_code == 0
     assert "Lightweight CLI that wraps Python's `http.server`" in result.output
 
 
-def test_version():
+def test_version(capsys):
     """Test the CLI with --version flag."""
-    result = CliRunner().invoke(app, ["--version"])
+    result = invoke(capsys, ["--version"])
     assert result.exit_code == 0
     assert result.output.strip() == __version__
 
@@ -67,36 +76,36 @@ def test_python_m_version():
     assert result.stdout.strip() == __version__
 
 
-def test_invalid_timeout():
+def test_invalid_timeout(capsys):
     """Test the CLI with a --timeout value that can't be parsed."""
-    result = CliRunner().invoke(app, ["--timeout", "garbage"])
+    result = invoke(capsys, ["--timeout", "garbage"])
     assert result.exit_code == 2
     assert "Unable to parse 'garbage' as a duration." in result.output
 
 
 @pytest.mark.parametrize("timeout", ["0s", "-5s"])
-def test_nonpositive_timeout(timeout):
-    result = CliRunner().invoke(app, [f"--timeout={timeout}"])
+def test_nonpositive_timeout(timeout, capsys):
+    result = invoke(capsys, [f"--timeout={timeout}"])
     assert result.exit_code == 2
-    assert f"Duration must be positive, got '{timeout}'." in unwrapped(result.output)
+    assert f"Duration must be positive, got '{timeout}'." in result.output
 
 
-def test_nonexistent_directory(tmp_path):
-    result = CliRunner().invoke(app, [str(tmp_path / "nonexistent")])
+def test_nonexistent_directory(tmp_path, capsys):
+    result = invoke(capsys, [str(tmp_path / "nonexistent")])
     assert result.exit_code == 2
-    assert "does not exist" in unwrapped(result.output)
+    assert "does not exist" in result.output
 
 
-def test_invalid_port_range():
-    result = CliRunner().invoke(app, ["--port-range-min", "9000", "--port-range-max", "8000"])
+def test_invalid_port_range(capsys):
+    result = invoke(capsys, ["--port-range-min", "9000", "--port-range-max", "8000"])
     assert result.exit_code == 2
-    assert "Invalid port range [9000, 8000]." in unwrapped(result.output)
+    assert "Invalid port range [9000, 8000]." in result.output
 
 
-def test_invalid_port():
-    result = CliRunner().invoke(app, ["--port", "65536"])
+def test_invalid_port(capsys):
+    result = invoke(capsys, ["--port", "65536"])
     assert result.exit_code == 2
-    assert "Invalid port 65536." in unwrapped(result.output)
+    assert "Invalid port 65536." in result.output
 
 
 @pytest.mark.parametrize(
@@ -110,24 +119,24 @@ def test_invalid_port():
         ),
     ],
 )
-def test_port_in_use(tmp_path, host, target):
+def test_port_in_use(tmp_path, host, target, capsys):
     with held_port(host) as port:
-        result = CliRunner().invoke(app, [str(tmp_path), "--bind", host, "--port", str(port)])
+        result = invoke(capsys, [str(tmp_path), "--bind", host, "--port", str(port)])
     assert result.exit_code == 1
     assert f"Could not bind to {target.format(port=port)}: " in result.output
 
 
-def test_unresolvable_bind_address(tmp_path):
-    result = CliRunner().invoke(app, [str(tmp_path), "--bind", "nonexistent.invalid"])
+def test_unresolvable_bind_address(tmp_path, capsys):
+    result = invoke(capsys, [str(tmp_path), "--bind", "nonexistent.invalid"])
     assert result.exit_code == 1
     assert "Could not bind to nonexistent.invalid: " in result.output
 
 
-def test_port_range_search(tmp_path):
+def test_port_range_search(tmp_path, capsys):
     port = free_port_pair()
     with held_port(port=port):
-        result = CliRunner().invoke(
-            app,
+        result = invoke(
+            capsys,
             [
                 str(tmp_path),
                 "--timeout",
@@ -142,11 +151,11 @@ def test_port_range_search(tmp_path):
     assert f"at http://127.0.0.1:{port + 1}/." in result.output
 
 
-def test_port_range_taken_falls_back_to_os_port(tmp_path):
+def test_port_range_taken_falls_back_to_os_port(tmp_path, capsys):
     port = free_port_pair()
     with held_port(port=port), held_port(port=port + 1):
-        result = CliRunner().invoke(
-            app,
+        result = invoke(
+            capsys,
             [
                 str(tmp_path),
                 "--timeout",

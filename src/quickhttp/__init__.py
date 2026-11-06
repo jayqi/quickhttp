@@ -1,16 +1,11 @@
 import importlib.metadata
 
-from quickhttp.http_server import (
-    TimedHTTPServer,
-    run_timed_http_server,
-)
+from quickhttp.http_server import QuickHTTPServer, create_server
 
 __version__ = importlib.metadata.version("quickhttp")
 
 
 __all__ = [
-    "run_timed_http_server",
-    "TimedHTTPServer",
+    "create_server",
+    "QuickHTTPServer",
 ]
-
-__version__

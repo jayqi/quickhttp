@@ -1,23 +1,48 @@
-import concurrent.futures
-import os
 import platform
+import re
 import shutil
 import signal
+import socket
 import subprocess
-from time import sleep
+import sys
 
 import pytest
 import requests
 from typer.testing import CliRunner
 
+from helpers import free_port_pair, held_port
 from quickhttp import __version__
 from quickhttp.cli import app
-from quickhttp.http_server import find_available_port, is_port_available
 
-# Duration to keep server alive for
-KEEP_ALIVE_TIME = 4 + (os.getenv("CI", "") == "true") * 2
-# Duration to wait before running test, to give server time to start up
-WAIT_TIME = 2 + (os.getenv("CI", "") == "true") * 2
+URL_PATTERN = re.compile(r" at (http://\S+/)\. ")
+
+
+def unwrapped(output: str) -> str:
+    """Remove the line wrapping and box drawing that typer adds around error messages."""
+    return " ".join(output.replace("│", " ").split())
+
+
+def start_quickhttp(*args: str) -> tuple[subprocess.Popen[str], str]:
+    """Start `python -m quickhttp` and wait until it reports the URL it's serving."""
+    if platform.system() == "Windows":
+        popen_kwargs = {"creationflags": subprocess.CREATE_NEW_PROCESS_GROUP}
+    else:
+        popen_kwargs = {}
+    process = subprocess.Popen(
+        [sys.executable, "-m", "quickhttp", *args],
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        text=True,
+        **popen_kwargs,
+    )
+    assert process.stdout is not None
+    line = process.stdout.readline()
+    match = URL_PATTERN.search(line)
+    if match is None:
+        process.kill()
+        stdout, stderr = process.communicate()
+        pytest.fail(f"quickhttp didn't report a URL.\nstdout:\n{line}{stdout}\nstderr:\n{stderr}")
+    return process, match.group(1)
 
 
 def test_help():
@@ -34,6 +59,17 @@ def test_version():
     assert result.output.strip() == __version__
 
 
+def test_python_m_version():
+    """Test the CLI with --version flag."""
+    result = subprocess.run(
+        [sys.executable, "-m", "quickhttp", "--version"],
+        capture_output=True,
+        text=True,
+    )
+    assert result.returncode == 0
+    assert result.stdout.strip() == __version__
+
+
 def test_invalid_timeout():
     """Test the CLI with a --timeout value that can't be parsed."""
     result = CliRunner().invoke(app, ["--timeout", "garbage"])
@@ -41,185 +77,125 @@ def test_invalid_timeout():
     assert "Unable to parse 'garbage' as a duration." in result.output
 
 
-def test_python_m_version():
-    """Test the CLI with --version flag."""
-    result = subprocess.run(
-        ["python", "-m", "quickhttp", "--version"],
-        stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE,
-        universal_newlines=True,
-        shell=platform.system() == "Windows",
-    )
-    print(result.stdout)
-    print("---")
-    print(result.stderr)
-    assert result.returncode == 0
-    assert result.stdout.strip() == __version__
+@pytest.mark.parametrize("timeout", ["0s", "-5s"])
+def test_nonpositive_timeout(timeout):
+    result = CliRunner().invoke(app, [f"--timeout={timeout}"])
+    assert result.exit_code == 2
+    assert f"Duration must be positive, got '{timeout}'." in unwrapped(result.output)
 
 
-def test_quickhttp(html_file, tmp_path):
-    shutil.copy(html_file, tmp_path)
-    port = find_available_port()
+def test_nonexistent_directory(tmp_path):
+    result = CliRunner().invoke(app, [str(tmp_path / "nonexistent")])
+    assert result.exit_code == 2
+    assert "does not exist" in unwrapped(result.output)
 
-    with concurrent.futures.ThreadPoolExecutor() as executor:
-        future = executor.submit(
-            CliRunner().invoke,
+
+def test_invalid_port_range():
+    result = CliRunner().invoke(app, ["--port-range-min", "9000", "--port-range-max", "8000"])
+    assert result.exit_code == 2
+    assert "Invalid port range [9000, 8000]." in unwrapped(result.output)
+
+
+def test_port_in_use(tmp_path):
+    with held_port() as port:
+        result = CliRunner().invoke(app, [str(tmp_path), "--port", str(port)])
+    assert result.exit_code == 1
+    assert f"Could not bind to 127.0.0.1:{port}: " in result.output
+
+
+def test_unresolvable_bind_address(tmp_path):
+    result = CliRunner().invoke(app, [str(tmp_path), "--bind", "nonexistent.invalid"])
+    assert result.exit_code == 1
+    assert "Could not bind to nonexistent.invalid: " in result.output
+
+
+def test_port_range_search(tmp_path):
+    port = free_port_pair()
+    with held_port(port=port):
+        result = CliRunner().invoke(
             app,
             [
                 str(tmp_path),
                 "--timeout",
-                f"{KEEP_ALIVE_TIME}s",
+                "0.1s",
                 "--port-range-min",
-                port,
+                str(port),
                 "--port-range-max",
-                port,
+                str(port + 1),
             ],
         )
-        sleep(WAIT_TIME)
-
-        response = requests.get(f"http://127.0.0.1:{port}")
-        with html_file.open("r") as fp:
-            # Check that server closed first so we can print results as needed for debugging
-            result = future.result()
-            print(result.stdout)
-            assert result.exit_code == 0
-            assert result.stdout.strip().endswith("Server closed.")
-            assert is_port_available(port)
-            with pytest.raises(requests.exceptions.ConnectionError):
-                requests.get(f"http://127.0.0.1:{port}")
-            # Check that response is as expected
-            assert response.status_code == 200
-            assert response.text == fp.read()
+    assert result.exit_code == 0
+    assert f"at http://127.0.0.1:{port + 1}/." in result.output
 
 
-def test_python_m_quickhttp(html_file, tmp_path):
-    shutil.copy(html_file, tmp_path)
-    port = find_available_port()
-
-    with concurrent.futures.ThreadPoolExecutor() as executor:
-        command = [
-            "python",
-            "-m",
-            "quickhttp",
-            str(tmp_path),
-            "--timeout",
-            f"{KEEP_ALIVE_TIME}s",
-            "--port-range-min",
-            str(port),
-            "--port-range-max",
-            str(port),
-        ]
-        print(command)
-        future = executor.submit(
-            subprocess.run,
-            command,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-            universal_newlines=True,
-            shell=platform.system() == "Windows",
-        )
-        sleep(WAIT_TIME)
-
-        response = requests.get(f"http://127.0.0.1:{port}")
-        with html_file.open("r") as fp:
-            # Check that server closed first so we can print results as needed for debugging
-            result = future.result()
-            print(result.stdout)
-            print(result.stderr)
-            assert result.returncode == 0
-            assert result.stdout.strip().endswith("Server closed.")
-            assert is_port_available(port)
-            with pytest.raises(requests.exceptions.ConnectionError):
-                requests.get(f"http://127.0.0.1:{port}")
-            # Check that response is as expected
-            assert response.status_code == 200
-            assert response.text == fp.read()
-
-
-def test_quickhttp_with_port(html_file, tmp_path):
-    shutil.copy(html_file, tmp_path)
-    port = find_available_port()
-
-    with concurrent.futures.ThreadPoolExecutor() as executor:
-        future = executor.submit(
-            CliRunner().invoke,
+def test_port_range_taken_falls_back_to_os_port(tmp_path):
+    port = free_port_pair()
+    with held_port(port=port), held_port(port=port + 1):
+        result = CliRunner().invoke(
             app,
-            [str(tmp_path), "--timeout", f"{KEEP_ALIVE_TIME}s", "--port", port],
+            [
+                str(tmp_path),
+                "--timeout",
+                "0.1s",
+                "--port-range-min",
+                str(port),
+                "--port-range-max",
+                str(port + 1),
+            ],
         )
-        sleep(WAIT_TIME)
-
-        response = requests.get(f"http://127.0.0.1:{port}")
-        with html_file.open("r") as fp:
-            # Check that server closed first so we can print results as needed for debugging
-            result = future.result()
-            print(result.stdout)
-            assert result.exit_code == 0
-            assert result.stdout.strip().endswith("Server closed.")
-            assert is_port_available(port)
-            with pytest.raises(requests.exceptions.ConnectionError):
-                requests.get(f"http://127.0.0.1:{port}")
-            # Check that response is as expected
-            assert response.status_code == 200
-            assert response.text == fp.read()
+    assert result.exit_code == 0
+    assert f"No available port in range [{port}, {port + 1}]." in result.output
+    assert "Server closed." in result.output
 
 
-@pytest.mark.flaky(reruns=1, reruns_delay=1, condition=os.getenv("RETRY_FLAKY_TESTS", "") == "1")
+def test_serves_until_timeout(html_file, tmp_path):
+    shutil.copy(html_file, tmp_path)
+    process, url = start_quickhttp(str(tmp_path), "--port", "0", "--timeout", "2s")
+
+    response = requests.get(url, timeout=5)
+    assert response.status_code == 200
+    assert response.text == html_file.read_text()
+
+    stdout, stderr = process.communicate(timeout=15)
+    print(stdout, stderr, sep="\n---\n")
+    assert process.returncode == 0
+    assert "Timeout reached." in stdout
+    assert stdout.strip().endswith("Server closed.")
+    with pytest.raises(requests.exceptions.ConnectionError):
+        requests.get(url, timeout=5)
+
+
 def test_keyboard_interrupt(html_file, tmp_path):
     shutil.copy(html_file, tmp_path)
-    port = find_available_port()
-    command = [
-        "python",
-        "-m",
-        "quickhttp",
-        str(tmp_path),
-        "--timeout",
-        f"{2 * WAIT_TIME + KEEP_ALIVE_TIME}s",
-        "--port-range-min",
-        str(port),
-        "--port-range-max",
-        str(port),
-    ]
+    process, url = start_quickhttp(str(tmp_path), "--port", "0", "--timeout", "1m")
 
-    if platform.system() == "Windows":
-        popen_kwargs = {
-            "shell": True,
-            "creationflags": subprocess.CREATE_NEW_PROCESS_GROUP,
-        }
-    else:
-        popen_kwargs = {}
-
-    process = subprocess.Popen(
-        command,
-        stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE,
-        universal_newlines=True,
-        **popen_kwargs,
-    )
-    # Server is up
-    sleep(WAIT_TIME)
-    response = requests.get(f"http://127.0.0.1:{port}")
+    response = requests.get(url, timeout=5)
     assert response.status_code == 200
 
-    # Shut down server
-    sleep(WAIT_TIME)
     if platform.system() == "Windows":
-        os.kill(process.pid, signal.CTRL_BREAK_EVENT)
+        process.send_signal(signal.CTRL_BREAK_EVENT)
     else:
         process.send_signal(signal.SIGINT)
-
-    # Server is down
-    stdout, stderr = process.communicate()
-    print(stdout)
-    print("---")
-    print(stderr)
+    stdout, stderr = process.communicate(timeout=15)
+    print(stdout, stderr, sep="\n---\n")
     if platform.system() == "Windows":
-        # Not sure how to gracefully shut down Windows process
-        assert process.returncode > 0
-        assert "^C" in stderr
+        # CTRL_BREAK_EVENT terminates the process without raising KeyboardInterrupt.
+        assert process.returncode != 0
     else:
         assert process.returncode == 0
         assert "KeyboardInterrupt received." in stdout
-        assert "Server closed." in stdout
-    assert is_port_available(port)
+        assert stdout.strip().endswith("Server closed.")
     with pytest.raises(requests.exceptions.ConnectionError):
-        requests.get(f"http://127.0.0.1:{port}")
+        requests.get(url, timeout=5)
+
+
+def test_bind_ipv6_loopback(tmp_path):
+    if not socket.has_ipv6:
+        pytest.skip("IPv6 not available")
+    process, url = start_quickhttp(
+        str(tmp_path), "--bind", "::1", "--port", "0", "--timeout", "1s"
+    )
+    assert url.startswith("http://[::1]:")
+    assert requests.get(url, timeout=5).status_code == 200
+    process.communicate(timeout=15)
+    assert process.returncode == 0

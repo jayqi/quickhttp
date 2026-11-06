@@ -91,8 +91,9 @@ def test_create_server_explicit_port_in_use(tmp_path):
 @pytest.mark.parametrize("bind, held_host, v6only", OTHER_ADDRESS_CASES)
 def test_create_server_explicit_port_in_use_on_other_address(tmp_path, bind, held_host, v6only):
     with held_port(held_host, v6only=v6only) as port:
-        with pytest.raises(OSError, match=f"Port {port} is already in use on "):
+        with pytest.raises(OSError) as excinfo:
             create_server(tmp_path, bind=bind, port=port)
+    assert excinfo.value.errno == errno.EADDRINUSE
 
 
 def test_create_server_permission_denied_on_loopback(tmp_path, monkeypatch):
@@ -175,8 +176,8 @@ def test_server_shuts_down_when_idle_despite_idle_connection(tmp_path):
 def test_server_requests_restart_idle_timeout(tmp_path):
     server = create_server(tmp_path, port=0)
     with serving(server, idle_timeout=1) as thread:
-        for _ in range(4):
-            time.sleep(0.5)
+        for _ in range(8):
+            time.sleep(0.25)
             requests.get(server.url, timeout=5)
         assert thread.is_alive()
         last_request = time.monotonic()
@@ -196,8 +197,12 @@ def test_server_does_not_shut_down_while_request_in_progress(tmp_path, monkeypat
 
     monkeypatch.setattr(_Handler, "copyfile", blocking_copyfile)
     server = create_server(tmp_path, port=0)
+    responses = []
     with serving(server, idle_timeout=0.5) as thread:
-        request = Thread(target=requests.get, args=(server.url + "data.txt",), daemon=True)
+        request = Thread(
+            target=lambda: responses.append(requests.get(server.url + "data.txt", timeout=10)),
+            daemon=True,
+        )
         request.start()
         assert copy_started.wait(timeout=5)
         time.sleep(1.5)
@@ -206,6 +211,7 @@ def test_server_does_not_shut_down_while_request_in_progress(tmp_path, monkeypat
         request.join(timeout=5)
         request_ended = time.monotonic()
     assert time.monotonic() - request_ended >= 0.4
+    assert [response.text for response in responses] == ["data"]
 
 
 @requires_ipv6

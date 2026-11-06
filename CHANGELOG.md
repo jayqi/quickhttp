@@ -3,7 +3,7 @@
 ## v3.0.0 - Unreleased
 
 - Changed the server to handle requests concurrently. Previously, a connection that sent nothing, such as one a browser opens ahead of time, blocked all other requests and kept the server from shutting down, which could show as a blank page.
-- Changed how ports in use are detected, from connecting to `127.0.0.1` to binding the port. A port now counts as in use if it's bound on the address being served or on any loopback (`127.0.0.1`, `::1`) or all-interfaces (`0.0.0.0`, `::`) address, so that `localhost` can't reach a different server. On some platforms, a port in use on any address also counts. The port search skips such ports, and an explicit `--port` that's in use is reported as an error that names the conflicting address.
+- Changed how ports in use are detected, from connecting to `127.0.0.1` to binding the port. A port now counts as in use if it's bound on the address being served or on any loopback (`127.0.0.1`, `::1`) or all-interfaces (`0.0.0.0`, `::`) address, so that `localhost` can't reach a different server. On some platforms, a port in use on any address also counts. The port search skips such ports, and an explicit `--port` that's in use is reported as an error.
 - Changed the port search to use a port chosen by the operating system when no port in the range is available, instead of failing.
 - Changed `--port 0` to use a port chosen by the operating system. It previously searched the port range.
 - Changed the idle timeout to wait for in-progress requests to finish, and to count from the end of the most recent request.

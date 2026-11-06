@@ -19,18 +19,17 @@ DEFAULT_PORT_RANGE_MAX: int = 8999
 
 _SKIPPABLE_BIND_ERRNOS = frozenset(
     code
-    for name in ("EADDRINUSE", "EACCES", "WSAEADDRINUSE", "WSAEACCES")
+    for name in ("EADDRINUSE", "EACCES", "WSAEADDRINUSE")
     if (code := getattr(errno, name, None)) is not None
 )
 """Bind errors that mean a port is in use or not permitted, as opposed to a bad address."""
 
 _CONFLICT_ERRNOS = frozenset(
     code
-    for name in ("EADDRINUSE", "WSAEADDRINUSE", "WSAEACCES")
+    for name in ("EADDRINUSE", "WSAEADDRINUSE")
     if (code := getattr(errno, name, None)) is not None
 )
-"""Bind errors that mean another socket holds the port. Windows reports some conflicts as
-WSAEACCES."""
+"""Bind errors that mean another socket holds the port."""
 
 _CONFLICT_PROBE_HOSTS = ("127.0.0.1", "::1", "0.0.0.0", "::")
 """Addresses where a port in use makes it unavailable. They're probed separately because on macOS
@@ -50,8 +49,8 @@ def _prepare_socket(sock: socket.socket) -> None:
 
 
 def _check_port_free(port: int) -> None:
-    """Raise OSError if the port is in use on any of the probe hosts. Each probe binds a
-    throwaway socket and closes it without listening.
+    """Raise the bind error if the port is in use on any of the probe hosts. Each probe binds
+    a throwaway socket and closes it without listening.
     """
     for host in _CONFLICT_PROBE_HOSTS:
         family = socket.AF_INET6 if ":" in host else socket.AF_INET
@@ -65,7 +64,7 @@ def _check_port_free(port: int) -> None:
                 sock.bind((host, port))
             except OSError as e:
                 if e.errno in _CONFLICT_ERRNOS:
-                    raise OSError(e.errno, f"Port {port} is already in use on {host}") from e
+                    raise
 
 
 class _Handler(SimpleHTTPRequestHandler):

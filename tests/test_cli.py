@@ -121,10 +121,7 @@ def test_port_in_use(tmp_path, host, target):
     with held_port(host) as port:
         result = CliRunner().invoke(app, [str(tmp_path), "--bind", host, "--port", str(port)])
     assert result.exit_code == 1
-    assert (
-        f"Could not bind to {target.format(port=port)}: Port {port} is already in use on {host}"
-        in result.output
-    )
+    assert f"Could not bind to {target.format(port=port)}: " in result.output
 
 
 def test_unresolvable_bind_address(tmp_path):

@@ -5,6 +5,7 @@ from functools import partial
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 import os
 import socket
+import socketserver
 import threading
 import time
 from typing import cast
@@ -89,7 +90,10 @@ class QuickHTTPServer(ThreadingHTTPServer):
             with suppress(OSError):
                 self.socket.setsockopt(socket.IPPROTO_IPV6, socket.IPV6_V6ONLY, 0)
         _set_bind_options(self.socket)
-        super().server_bind()
+        # Skips HTTPServer.server_bind, whose reverse DNS lookup for server_name can hang.
+        socketserver.TCPServer.server_bind(self)
+        self.server_name = self.host
+        self.server_port = self.port
 
     @property
     def host(self) -> str:

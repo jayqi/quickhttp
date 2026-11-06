@@ -55,6 +55,16 @@ def test_create_server_os_chosen_port(tmp_path):
         assert server.url == f"http://127.0.0.1:{server.port}/"
 
 
+def test_create_server_does_not_look_up_hostname(tmp_path, monkeypatch):
+    def fail_getfqdn(name=""):
+        raise AssertionError("getfqdn called")
+
+    monkeypatch.setattr(socket, "getfqdn", fail_getfqdn)
+    with create_server(tmp_path, port=0) as server:
+        assert server.server_name == "127.0.0.1"
+        assert server.server_port == server.port
+
+
 def test_create_server_unresolvable_address(tmp_path):
     with pytest.raises(socket.gaierror):
         create_server(tmp_path, bind="nonexistent.invalid")

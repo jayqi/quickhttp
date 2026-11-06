@@ -10,7 +10,7 @@
 
 - Automatically finds and uses an available port, preferring the 8000–8999 range.
 - Has a keep-alive time after which it will shut down automatically if no requests are received, in case you forget about it.
-- More secure default of `127.0.0.1` (`localhost`) instead of `0.0.0.0`.
+- More secure default of `127.0.0.1`, which is only accessible from this computer, instead of `0.0.0.0`.
 - Supports IPv6, including `::` to serve on all interfaces over both IPv4 and IPv6.
 - Easier to type and autocomplete than `python -m http.server`.
 
@@ -65,20 +65,22 @@ and shutdown.
 │                                      such as '10m' or '10:00'.               │
 │                                      [default: 10m]                          │
 │ --bind                -b      <str>  Address to bind server to. '127.0.0.1'  │
-│                                      (or 'localhost') will only be           │
+│                                      (IPv4) or '::1' (IPv6) will only be     │
 │                                      accessible from this computer.          │
 │                                      '0.0.0.0' (IPv4) or '::' (IPv4 and      │
 │                                      IPv6) is all interfaces (IP addresses)  │
 │                                      on this computer, meaning that it can   │
 │                                      be accessible by other computers at     │
-│                                      your IP address.                        │
+│                                      your IP address. A hostname binds the   │
+│                                      first address it resolves to.           │
 │                                      [default: 127.0.0.1]                    │
 │ --port                -p      <int>  Port to use. 0 uses a port chosen by    │
-│                                      the operating system. If not specified, │
-│                                      searches the port range for an          │
-│                                      available port, and uses a port chosen  │
-│                                      by the operating system if none is      │
-│                                      available.                              │
+│                                      the operating system. If specified,     │
+│                                      ignores the port range options. If not  │
+│                                      specified, searches the port range for  │
+│                                      an available port, and uses a port      │
+│                                      chosen by the operating system if none  │
+│                                      is available.                           │
 │ --port-range-min              <int>  Minimum of range to search for an       │
 │                                      available port.                         │
 │                                      [default: 8000]                         │

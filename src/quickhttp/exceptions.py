@@ -4,3 +4,7 @@ class QuickhttpException(Exception):
 
 class InvalidPortRangeError(QuickhttpException, ValueError):
     pass
+
+
+class InvalidPortError(QuickhttpException, ValueError):
+    pass

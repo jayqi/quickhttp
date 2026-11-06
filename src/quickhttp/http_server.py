@@ -10,7 +10,7 @@ import threading
 import time
 from typing import cast
 
-from quickhttp.exceptions import InvalidPortRangeError
+from quickhttp.exceptions import InvalidPortError, InvalidPortRangeError
 
 DEFAULT_PORT_RANGE_MIN: int = 8000
 """Default minimum of the port search range."""
@@ -24,7 +24,10 @@ _SKIPPABLE_BIND_ERRNOS = frozenset(
 )
 """Bind errors that mean a port is in use or not permitted, as opposed to a bad address."""
 
-_LOOPBACK_SIBLINGS = {"127.0.0.1": "::1", "::1": "127.0.0.1"}
+_CONFLICT_PROBE_HOSTS = ("127.0.0.1", "::1", "0.0.0.0", "::")
+"""Addresses where a port in use makes it unavailable. They're probed separately because on macOS,
+SO_REUSEADDR allows binding a specific address while another socket listens on the wildcard, and
+vice versa."""
 
 
 def _set_bind_options(sock: socket.socket) -> None:
@@ -39,15 +42,15 @@ class _Handler(SimpleHTTPRequestHandler):
     timeout = 60
 
     def do_GET(self):
-        with self._server().track_request():
+        with self._server()._track_request():
             super().do_GET()
 
     def do_HEAD(self):
-        with self._server().track_request():
+        with self._server()._track_request():
             super().do_HEAD()
 
     def end_headers(self):
-        self.send_header("Cache-Control", "no-cache")
+        self.send_header("Cache-Control", "no-store")
         super().end_headers()
 
     def _server(self) -> "QuickHTTPServer":
@@ -112,7 +115,7 @@ class QuickHTTPServer(ThreadingHTTPServer):
         return f"http://{host}:{self.port}/"
 
     @contextmanager
-    def track_request(self) -> Generator[None, None, None]:
+    def _track_request(self) -> Generator[None, None, None]:
         """Mark a request as in progress. The server doesn't count as idle while any request
         is in progress, and the idle time restarts when the last one finishes.
         """
@@ -166,6 +169,10 @@ def _port_free_on(host: str, port: int) -> bool:
     return True
 
 
+def _port_in_use(port: int) -> bool:
+    return not all(_port_free_on(host, port) for host in _CONFLICT_PROBE_HOSTS)
+
+
 def create_server(
     directory: str | os.PathLike[str],
     bind: str = "127.0.0.1",
@@ -175,14 +182,17 @@ def create_server(
     """Create a [`QuickHTTPServer`][quickhttp.http_server.QuickHTTPServer] bound to an
     available port.
 
+    A port counts as in use if it's bound on `bind` or on any loopback (`127.0.0.1`, `::1`) or
+    all-interfaces (`0.0.0.0`, `::`) address, so that `localhost` can't reach a different server.
+
     If `port` is None, tries each port in `port_range` in ascending order and uses the first
-    one that can be bound. When binding `127.0.0.1` or `::1`, a port is also skipped if it is
-    in use on the other one, so that `localhost` can't reach a different server. If no port
-    in the range is available, uses a port chosen by the operating system.
+    one that isn't in use. If no port in the range is available, uses a port chosen by the
+    operating system.
 
     Args:
         directory (str | os.PathLike[str]): Directory to serve.
-        bind (str, optional): Address to bind to. Defaults to `"127.0.0.1"`.
+        bind (str, optional): Address to bind to. A hostname binds the first address it resolves
+            to. Defaults to `"127.0.0.1"`.
         port (int | None, optional): Port to bind to. `0` uses a port chosen by the operating
             system. Defaults to None, which searches `port_range`.
         port_range (tuple[int, int], optional): Inclusive range of ports to search. Defaults to
@@ -190,35 +200,39 @@ def create_server(
             [DEFAULT_PORT_RANGE_MAX][quickhttp.http_server.DEFAULT_PORT_RANGE_MAX]).
 
     Raises:
+        InvalidPortError: If `port` isn't between 0 and 65535.
         InvalidPortRangeError: If `port` is None and `port_range` isn't a valid range of ports.
-        OSError: If binding fails for a reason other than the port being in use or not
-            permitted, such as an address that can't be resolved, or if `port` is given and
-            can't be bound.
+        OSError: If `bind` can't be resolved, if `port` is given and is in use or can't be
+            bound, or if binding fails for a reason other than the port being in use or not
+            permitted.
 
     Returns:
         QuickHTTPServer: A server bound to the address and port, not yet serving.
     """
-    if port is not None:
-        return QuickHTTPServer((bind, port), directory)
-
+    if port is not None and not 0 <= port <= 65535:
+        raise InvalidPortError(f"Invalid port {port}. The port must be between 0 and 65535.")
     range_min, range_max = port_range
-    if not 1 <= range_min <= range_max <= 65535:
+    if port is None and not 1 <= range_min <= range_max <= 65535:
         raise InvalidPortRangeError(
             f"Invalid port range [{range_min}, {range_max}]. The minimum must be at least 1, "
             "the maximum at most 65535, and the minimum no greater than the maximum."
         )
+    host = str(
+        socket.getaddrinfo(bind, 0, type=socket.SOCK_STREAM, flags=socket.AI_PASSIVE)[0][4][0]
+    )
+
+    if port is not None:
+        if port != 0 and _port_in_use(port):
+            raise OSError(errno.EADDRINUSE, "Address already in use")
+        return QuickHTTPServer((host, port), directory)
+
     for candidate in range(range_min, range_max + 1):
+        if _port_in_use(candidate):
+            continue
         try:
-            server = QuickHTTPServer((bind, candidate), directory)
-        except socket.gaierror:
-            raise
+            return QuickHTTPServer((host, candidate), directory)
         except OSError as e:
             if e.errno in _SKIPPABLE_BIND_ERRNOS:
                 continue
             raise
-        sibling = _LOOPBACK_SIBLINGS.get(server.host)
-        if sibling is not None and not _port_free_on(sibling, candidate):
-            server.server_close()
-            continue
-        return server
-    return QuickHTTPServer((bind, 0), directory)
+    return QuickHTTPServer((host, 0), directory)

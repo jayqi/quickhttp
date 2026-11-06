@@ -99,11 +99,29 @@ def test_invalid_port_range():
     assert "Invalid port range [9000, 8000]." in unwrapped(result.output)
 
 
-def test_port_in_use(tmp_path):
-    with held_port() as port:
-        result = CliRunner().invoke(app, [str(tmp_path), "--port", str(port)])
+@pytest.mark.parametrize("port", ["-1", "65536"])
+def test_invalid_port(port):
+    result = CliRunner().invoke(app, ["--port", port])
+    assert result.exit_code == 2
+    assert f"Invalid port {port}." in unwrapped(result.output)
+
+
+@pytest.mark.parametrize(
+    "host, target",
+    [
+        ("127.0.0.1", "127.0.0.1:{port}"),
+        pytest.param(
+            "::1",
+            "[::1]:{port}",
+            marks=pytest.mark.skipif(not socket.has_ipv6, reason="IPv6 not available"),
+        ),
+    ],
+)
+def test_port_in_use(tmp_path, host, target):
+    with held_port(host) as port:
+        result = CliRunner().invoke(app, [str(tmp_path), "--bind", host, "--port", str(port)])
     assert result.exit_code == 1
-    assert f"Could not bind to 127.0.0.1:{port}: " in result.output
+    assert f"Could not bind to {target.format(port=port)}: Address already in use" in result.output
 
 
 def test_unresolvable_bind_address(tmp_path):

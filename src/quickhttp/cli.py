@@ -6,7 +6,7 @@ from pytimeparse import parse
 import typer
 
 from quickhttp import __version__
-from quickhttp.exceptions import InvalidPortRangeError
+from quickhttp.exceptions import InvalidPortError, InvalidPortRangeError
 from quickhttp.http_server import DEFAULT_PORT_RANGE_MAX, DEFAULT_PORT_RANGE_MIN, create_server
 
 app = typer.Typer()
@@ -42,10 +42,11 @@ def quickhttp(
         "--bind",
         "-b",
         help=(
-            "Address to bind server to. '127.0.0.1' (or 'localhost') will only be accessible from "
-            "this computer. '0.0.0.0' (IPv4) or '::' (IPv4 and IPv6) is all interfaces (IP "
-            "addresses) on this computer, meaning that it can be accessible by other computers "
-            "at your IP address."
+            "Address to bind server to. '127.0.0.1' (IPv4) or '::1' (IPv6) will only be "
+            "accessible from this computer. '0.0.0.0' (IPv4) or '::' (IPv4 and IPv6) is all "
+            "interfaces (IP addresses) on this computer, meaning that it can be accessible by "
+            "other computers at your IP address. A hostname binds the first address it "
+            "resolves to."
         ),
     ),
     port: Optional[int] = typer.Option(
@@ -53,9 +54,9 @@ def quickhttp(
         "--port",
         "-p",
         help=(
-            "Port to use. 0 uses a port chosen by the operating system. If not specified, "
-            "searches the port range for an available port, and uses a port chosen by the "
-            "operating system if none is available."
+            "Port to use. 0 uses a port chosen by the operating system. If specified, ignores "
+            "the port range options. If not specified, searches the port range for an available "
+            "port, and uses a port chosen by the operating system if none is available."
         ),
     ),
     port_range_min: int = typer.Option(
@@ -86,10 +87,17 @@ def quickhttp(
     port_range = (port_range_min, port_range_max)
     try:
         server = create_server(directory, bind=bind, port=port, port_range=port_range)
+    except InvalidPortError as e:
+        raise typer.BadParameter(str(e), param_hint="'--port' / '-p'")
     except InvalidPortRangeError as e:
         raise typer.BadParameter(str(e), param_hint="'--port-range-min' / '--port-range-max'")
     except OSError as e:
-        target = bind if port is None else f"{bind}:{port}"
+        if port is None:
+            target = bind
+        elif ":" in bind:
+            target = f"[{bind}]:{port}"
+        else:
+            target = f"{bind}:{port}"
         typer.echo(f"Could not bind to {target}: {e.strerror or e}", err=True)
         raise typer.Exit(code=1)
 

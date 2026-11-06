@@ -8,4 +8,5 @@ __version__ = importlib.metadata.version("quickhttp")
 __all__ = [
     "create_server",
     "QuickHTTPServer",
+    "__version__",
 ]

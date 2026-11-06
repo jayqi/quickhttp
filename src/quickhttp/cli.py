@@ -23,13 +23,18 @@ def _duration(value: str) -> float:
 def _parser(prog: str | None = None) -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         prog=prog,
+        allow_abbrev=False,
         description=(
             "Lightweight CLI that wraps Python's `http.server` with automatic port-finding and "
             "shutdown."
         ),
     )
     parser.add_argument(
-        "directory", nargs="?", default=".", type=Path, help="Directory to serve. (default: .)"
+        "directory",
+        nargs="?",
+        default=".",
+        type=Path,
+        help="Directory to serve. (default: %(default)s)",
     )
     parser.add_argument(
         "-t",
@@ -39,7 +44,7 @@ def _parser(prog: str | None = None) -> argparse.ArgumentParser:
         metavar="DURATION",
         help=(
             "Time to keep server alive for after most recent request. Accepts time expressions "
-            "parsable by pytimeparse, such as '10m' or '10:00'. (default: 10m)"
+            "parsable by pytimeparse, such as '10m' or '10:00'. (default: %(default)s)"
         ),
     )
     parser.add_argument(
@@ -97,7 +102,7 @@ def main(argv: Sequence[str] | None = None, prog: str | None = None) -> None:
     port_range_max: int = args.port_range_max
 
     if not directory.exists():
-        parser.error(f"argument directory: Directory '{directory}' does not exist.")
+        parser.error(f"argument directory: '{directory}' does not exist.")
     if not directory.is_dir():
         parser.error(f"argument directory: '{directory}' is not a directory.")
     try:

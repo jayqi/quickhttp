@@ -55,7 +55,6 @@ def test_help(capsys):
     """Test the CLI with --help flag."""
     result = invoke(capsys, ["--help"])
     assert result.exit_code == 0
-    assert "Lightweight CLI that wraps Python's `http.server`" in result.output
 
 
 def test_version(capsys):

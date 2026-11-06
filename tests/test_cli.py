@@ -15,11 +15,14 @@ from quickhttp import __version__
 from quickhttp.cli import app
 
 URL_PATTERN = re.compile(r" at (http://\S+/)\. ")
+ANSI_ESCAPE_PATTERN = re.compile(r"\x1b\[[0-9;]*m")
 
 
 def unwrapped(output: str) -> str:
-    """Remove the line wrapping and box drawing that typer adds around error messages."""
-    return " ".join(output.replace("│", " ").split())
+    """Remove the colors, line wrapping, and box drawing that typer adds around error
+    messages.
+    """
+    return " ".join(ANSI_ESCAPE_PATTERN.sub("", output).replace("│", " ").split())
 
 
 def start_quickhttp(*args: str) -> tuple[subprocess.Popen[str], str]:

@@ -8,3 +8,7 @@ class NoAvailablePortFoundError(QuickhttpException):
 
 class InvalidSearchTypeError(QuickhttpException, ValueError):
     pass
+
+
+class InvalidPortRangeError(QuickhttpException, ValueError):
+    pass

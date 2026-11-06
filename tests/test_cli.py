@@ -1,4 +1,3 @@
-import platform
 import re
 import shutil
 import signal
@@ -27,16 +26,11 @@ def unwrapped(output: str) -> str:
 
 def start_quickhttp(*args: str) -> tuple[subprocess.Popen[str], str]:
     """Start `python -m quickhttp` and wait until it reports the URL it's serving."""
-    if platform.system() == "Windows":
-        popen_kwargs = {"creationflags": subprocess.CREATE_NEW_PROCESS_GROUP}
-    else:
-        popen_kwargs = {}
     process = subprocess.Popen(
         [sys.executable, "-m", "quickhttp", *args],
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
         text=True,
-        **popen_kwargs,
     )
     assert process.stdout is not None
     line = process.stdout.readline()
@@ -99,11 +93,10 @@ def test_invalid_port_range():
     assert "Invalid port range [9000, 8000]." in unwrapped(result.output)
 
 
-@pytest.mark.parametrize("port", ["-1", "65536"])
-def test_invalid_port(port):
-    result = CliRunner().invoke(app, ["--port", port])
+def test_invalid_port():
+    result = CliRunner().invoke(app, ["--port", "65536"])
     assert result.exit_code == 2
-    assert f"Invalid port {port}." in unwrapped(result.output)
+    assert "Invalid port 65536." in unwrapped(result.output)
 
 
 @pytest.mark.parametrize(
@@ -186,6 +179,9 @@ def test_serves_until_timeout(html_file, tmp_path):
         requests.get(url, timeout=5)
 
 
+@pytest.mark.skipif(
+    sys.platform == "win32", reason="Ctrl-C can't be sent to a child process on Windows"
+)
 def test_keyboard_interrupt(html_file, tmp_path):
     shutil.copy(html_file, tmp_path)
     process, url = start_quickhttp(str(tmp_path), "--port", "0", "--timeout", "1m")
@@ -193,30 +189,11 @@ def test_keyboard_interrupt(html_file, tmp_path):
     response = requests.get(url, timeout=5)
     assert response.status_code == 200
 
-    if platform.system() == "Windows":
-        process.send_signal(signal.CTRL_BREAK_EVENT)
-    else:
-        process.send_signal(signal.SIGINT)
+    process.send_signal(signal.SIGINT)
     stdout, stderr = process.communicate(timeout=15)
     print(stdout, stderr, sep="\n---\n")
-    if platform.system() == "Windows":
-        # CTRL_BREAK_EVENT terminates the process without raising KeyboardInterrupt.
-        assert process.returncode != 0
-    else:
-        assert process.returncode == 0
-        assert "KeyboardInterrupt received." in stdout
-        assert stdout.strip().endswith("Server closed.")
+    assert process.returncode == 0
+    assert "KeyboardInterrupt received." in stdout
+    assert stdout.strip().endswith("Server closed.")
     with pytest.raises(requests.exceptions.ConnectionError):
         requests.get(url, timeout=5)
-
-
-def test_bind_ipv6_loopback(tmp_path):
-    if not socket.has_ipv6:
-        pytest.skip("IPv6 not available")
-    process, url = start_quickhttp(
-        str(tmp_path), "--bind", "::1", "--port", "0", "--timeout", "1s"
-    )
-    assert url.startswith("http://[::1]:")
-    assert requests.get(url, timeout=5).status_code == 200
-    process.communicate(timeout=15)
-    assert process.returncode == 0

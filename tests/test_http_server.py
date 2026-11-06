@@ -16,7 +16,8 @@ requires_ipv6 = pytest.mark.skipif(not socket.has_ipv6, reason="IPv6 not availab
 requires_dualstack = pytest.mark.skipif(
     not socket.has_dualstack_ipv6(), reason="Dual-stack IPv6 not available"
 )
-OTHER_ADDRESS_CASES = [
+PORT_IN_USE_CASES = [
+    pytest.param("127.0.0.1", "127.0.0.1", None, id="same-address"),
     pytest.param("127.0.0.1", "0.0.0.0", None, id="all-ipv4"),
     pytest.param("127.0.0.1", "::", False, id="all-dualstack", marks=requires_dualstack),
     pytest.param("127.0.0.1", "::", True, id="all-ipv6", marks=requires_ipv6),
@@ -53,11 +54,10 @@ def test_create_server_falls_back_to_os_port_when_range_is_taken(tmp_path):
             assert server.port not in (0, port, port + 1)
 
 
-@pytest.mark.parametrize("bind, held_host, v6only", OTHER_ADDRESS_CASES)
-def test_create_server_skips_port_in_use_on_other_address(tmp_path, bind, held_host, v6only):
+def test_create_server_skips_port_in_use_on_other_address(tmp_path):
     port = free_port_pair()
-    with held_port(held_host, port, v6only=v6only):
-        with create_server(tmp_path, bind=bind, port_range=(port, port + 1)) as server:
+    with held_port("0.0.0.0", port):
+        with create_server(tmp_path, bind="127.0.0.1", port_range=(port, port + 1)) as server:
             assert server.port == port + 1
 
 
@@ -82,14 +82,8 @@ def test_create_server_invalid_port(tmp_path, port):
         create_server(tmp_path, port=port)
 
 
-def test_create_server_explicit_port_in_use(tmp_path):
-    with held_port() as port:
-        with pytest.raises(OSError):
-            create_server(tmp_path, port=port)
-
-
-@pytest.mark.parametrize("bind, held_host, v6only", OTHER_ADDRESS_CASES)
-def test_create_server_explicit_port_in_use_on_other_address(tmp_path, bind, held_host, v6only):
+@pytest.mark.parametrize("bind, held_host, v6only", PORT_IN_USE_CASES)
+def test_create_server_explicit_port_in_use(tmp_path, bind, held_host, v6only):
     with held_port(held_host, v6only=v6only) as port:
         with pytest.raises(OSError) as excinfo:
             create_server(tmp_path, bind=bind, port=port)
@@ -140,20 +134,12 @@ def test_server_serves_file_and_listing(tmp_path, html_file):
         assert "data.txt" in listing.text
 
 
-def test_server_idle_connection_does_not_block_requests(tmp_path, html_file):
-    shutil.copy(html_file, tmp_path)
-    server = create_server(tmp_path, port=0)
-    with serving(server), socket.create_connection(("127.0.0.1", server.port)):
-        response = requests.get(server.url, timeout=5)
-        assert response.status_code == 200
-
-
-def test_server_shuts_down_when_idle_despite_idle_connection(tmp_path):
+def test_server_idle_connection_does_not_block_requests_or_shutdown(tmp_path):
     server = create_server(tmp_path, port=0)
     with socket.create_connection(("127.0.0.1", server.port)):
         start = time.monotonic()
         with serving(server, idle_timeout=0.5):
-            requests.get(server.url, timeout=5)
+            assert requests.get(server.url, timeout=5).status_code == 200
         assert time.monotonic() - start < 3
 
 

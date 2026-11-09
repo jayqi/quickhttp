@@ -1,6 +1,6 @@
 # Release Notes
 
-## v3.0.0 - Unreleased
+## v3.0.0 - 2026-11-09
 
 - Changed the server to handle requests concurrently. Previously, a connection that sent nothing, such as one a browser opens ahead of time, blocked all other requests and kept the server from shutting down, which could show as a blank page.
 - Changed the CLI to use Python's `argparse` instead of typer, which is no longer a dependency. This changes the format of help and error messages, adds `-h` as a short form of `--help`, and removes the `--install-completion` and `--show-completion` options.

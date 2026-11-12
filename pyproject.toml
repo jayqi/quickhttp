@@ -47,7 +47,7 @@ lint = [
 ]
 tests = [
   "pytest>=7.2",
-  "coverage>=7.1",
+  "coverage>=7.10",
   "pytest-cov>=4.0",
   "requests",
 ]
@@ -88,6 +88,7 @@ testpaths = ["tests"]
 
 [tool.coverage.run]
 source = ["quickhttp"]
+patch = ["subprocess"]
 
 [tool.coverage.paths]
 quickhttp = [

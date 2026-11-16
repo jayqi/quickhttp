@@ -145,13 +145,13 @@ def test_server_idle_connection_does_not_block_requests_or_shutdown(tmp_path):
 
 def test_server_requests_restart_idle_timeout(tmp_path):
     server = create_server(tmp_path, port=0)
-    with serving(server, idle_timeout=1) as thread:
-        for _ in range(8):
+    with serving(server, idle_timeout=2) as thread:
+        for _ in range(12):
             time.sleep(0.25)
             requests.get(server.url, timeout=5)
         assert thread.is_alive()
         last_request = time.monotonic()
-    assert time.monotonic() - last_request >= 0.5
+    assert time.monotonic() - last_request >= 1
 
 
 def test_server_does_not_shut_down_while_request_in_progress(tmp_path, monkeypatch):
